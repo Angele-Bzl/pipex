@@ -6,11 +6,24 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/17 09:12:13 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/17 15:01:57 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+/*
+1	initialiser le pipe
+2	checker les arg
+ouvrir les fichiers (gere here_doc et /dev/random)
+get_next_line quoi
+3	parser la commande
+trouve le chemin de la commande avec l'environnement
+recuperer l'argument pour pour cette commande
+4	parser les arg (c'est quoi la dif avec check ?)
+5	executer les commandes
+6	tout nettoyer
+*/
 
 int	main(int ac, char **av, char **env)
 {
@@ -20,9 +33,7 @@ int	main(int ac, char **av, char **env)
 	int	i;
 
 	if (ac != 4)
-	{
 		return (1);
-	}
     if (pipe(pipe_fd) == -1)
 	{
 		perror("pipe");
