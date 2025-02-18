@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/17 15:01:57 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/18 11:13:02 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,29 +46,20 @@ int	main(int ac, char **av, char **env)
 		perror("fork");
         exit(EXIT_FAILURE);
     }
+	arguments = malloc(sizeof(char*) * ac - 1);
+	i = 0;
+	while (i < ac - 1)
+	{
+		arguments[i] = ft_strdup(av[i + 1]);
+		i++;
+	}
 	if (pid == 0)
 	{
-		process_is_child(pipe_fd);
-		// close(pipe_fd[1]);
-		// while (read(pipe_fd[0], &buf, 1))
-		// 	write(1, &buf, 1);
-		// close(pipe_fd[0]);
-        // exit(EXIT_SUCCESS);
+		process_is_child(pipe_fd, arguments, env);
 	}
 	else
 	{
-		arguments = malloc(sizeof(char*) * ac - 1);
-		i = 0;
-		while (i < ac - 1)
-		{
-			arguments[i] = ft_strdup(av[i + 1]);
-			i++;
-		}
-		process_is_parent(pipe_fd, arguments);
-		// close(pipe_fd[0]);
-		// write(pipe_fd[1], av[1], strlen(av[1]));
-		// wait(NULL);
-        // exit(EXIT_SUCCESS);
+		process_is_parent(pipe_fd, arguments, env);
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 08:38:42 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/11 12:17:34 by abarzila         ###   ########.fr       */
+/*   Updated: 2024/11/27 11:23:08 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ static void	go_to_num(const char *str, int *i, int *minus)
 	}
 }
 
-/*
+/* 
 ** in case of int : OK
-** in case of long : return 0 or -1
+** in case of long : overflow
 ** in case of long long : return 0 or -1
 */
 int	ft_atoi(const char *str)
 {
-	int		result;
+	long	result;
 	int		i;
 	int		minus;
 

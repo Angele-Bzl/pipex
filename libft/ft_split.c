@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 09:18:47 by abarzila          #+#    #+#             */
-/*   Updated: 2024/11/19 11:29:23 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/01/09 17:32:34 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@ static int	count_words(char const *s, char c)
 	int	i;
 	int	words;
 
-	words = 0;
 	i = 0;
+	words = 0;
+	if (!s)
+		return (-1);
 	while (s[i])
 	{
-		if (s[i] != c && (s[i - 1] == c || i == 0))
+		if (s[i] != c && (i == 0 || s[i - 1] == c))
 			words++;
 		i++;
 	}

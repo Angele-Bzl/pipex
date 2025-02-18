@@ -6,14 +6,16 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 13:44:29 by abarzila          #+#    #+#              #
-#    Updated: 2024/11/27 08:14:02 by abarzila         ###   ########.fr        #
+#    Updated: 2025/01/20 16:32:26 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	libft.a
 CC	=	cc
 CFLAG	=	-Wall -Wextra -Werror
-INC		=	libft.h
+INC		=	libft.h\
+			get_next_line.h
+
 OBJ	=	$(SRC:.c=.o)
 OBJ_BONUS	=	$(BONUS:.c=.o)
 SRC	=	ft_isalpha.c\
@@ -49,7 +51,9 @@ SRC	=	ft_isalpha.c\
 		ft_strmapi.c\
 		ft_striteri.c\
 		ft_itoa.c\
-		ft_calloc.c
+		ft_calloc.c\
+		get_next_line.c\
+		get_next_line_utils.c
 
 BONUS = ft_lstnew_bonus.c\
 		ft_lstadd_front_bonus.c\
@@ -77,7 +81,7 @@ $(NAME): $(OBJ) $(INC) Makefile
 
 clean:
 	rm -f $(OBJ) $(OBJ_BONUS) .bonus
-	
+
 fclean: clean
 	rm -f $(NAME)
 

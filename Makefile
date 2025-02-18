@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/16 16:11:34 by abarzila          #+#    #+#              #
-#    Updated: 2025/02/17 15:13:45 by abarzila         ###   ########.fr        #
+#    Updated: 2025/02/18 17:25:42 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,10 +37,13 @@ CFLAGS		=	-Wall -Wextra -Werror
 #					FILES							#
 #####################################################
 CFILES			=	main.c\
+					utils.c\
+					parent.c\
+					child.c
 
 HEADERS		=	pipex.h
-OBJ			=	$(SRC:%.c=$(DOBJ)/%.o)
 SRC			=	$(DSRC)/$(CFILES)
+OBJ			=	$(CFILES:%.c=$(DOBJ)/%.o)
 
 #####################################################
 #					ARCHIVES						#
@@ -55,7 +58,7 @@ all : lib
 $(NAME) : $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 
-$(DOBJ)/%.o : %.c $(HEADERS) Makefile | $(DOBJ)
+$(DOBJ)/%.o : $(DSRC)/%.c $(HEADERS) Makefile | $(DOBJ)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(DOBJ):

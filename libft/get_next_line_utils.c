@@ -1,40 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 17:51:31 by abarzila          #+#    #+#             */
-/*   Updated: 2025/01/07 09:04:55 by abarzila         ###   ########.fr       */
+/*   Created: 2024/11/29 10:01:20 by abarzila          #+#    #+#             */
+/*   Updated: 2024/12/06 15:07:42 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "get_next_line.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+size_t	slen(const char *str)
 {
-	char	*str;
-	int		i;
-	int		j;
+	size_t	i;
 
-	if (!s1 || !s2)
-		return (NULL);
-	str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
 	if (!str)
-		return (NULL);
+		return (0);
 	i = 0;
-	while (s1[i])
-	{
-		str[i] = s1[i];
+	while (str[i])
 		i++;
-	}
-	j = 0;
-	while (s2[j])
-	{
-		str[i + j] = s2[j];
-		j++;
-	}
-	str[i + j] = '\0';
-	return (str);
+	return (i);
+}
+
+char	*clear_line(char *line)
+{
+	if (line)
+		free(line);
+	return (NULL);
 }
