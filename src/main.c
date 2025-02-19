@@ -6,11 +6,11 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/18 11:13:02 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/19 11:55:29 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../header/pipex.h"
 
 /*
 1	initialiser le pipe
@@ -27,10 +27,9 @@ recuperer l'argument pour pour cette commande
 
 int	main(int ac, char **av, char **env)
 {
-	int	pipe_fd[2];
+	int		pipe_fd[2];
 	pid_t	pid;
-	char **arguments;
-	int	i;
+	int		i;
 
 	if (ac != 4)
 		return (1);
@@ -46,20 +45,35 @@ int	main(int ac, char **av, char **env)
 		perror("fork");
         exit(EXIT_FAILURE);
     }
-	arguments = malloc(sizeof(char*) * ac - 1);
-	i = 0;
-	while (i < ac - 1)
-	{
-		arguments[i] = ft_strdup(av[i + 1]);
-		i++;
-	}
 	if (pid == 0)
 	{
-		process_is_child(pipe_fd, arguments, env);
+		if (dup2(1, pipe_fd[1]) == -1)
+		{
+			/*fail*/
+		}
+		manage_cmd_first(pipe_fd, av, env);
 	}
 	else
 	{
-		process_is_parent(pipe_fd, arguments, env);
+		/*gerer deux trois trucs dans le parent avant de refaire un enfant avec fork*/
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+		if (pid == 0)
+		{
+			if (dup2(1, av[3]) == -1)
+			{
+				/*fail*/
+			}
+			manage_cmd_last(pipe_fd, av, env);
+		}
+		else
+		{
+
+		}
 	}
 	return (0);
 }

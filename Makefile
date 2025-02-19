@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/16 16:11:34 by abarzila          #+#    #+#              #
-#    Updated: 2025/02/18 17:25:42 by abarzila         ###   ########.fr        #
+#    Updated: 2025/02/19 08:48:31 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ CC			=	cc
 DLIBFT		=	libft
 DSRC		=	src
 DOBJ		=	obj
+DHEADER		=	header
 
 #####################################################
 #					FLAGS							#
@@ -41,8 +42,9 @@ CFILES			=	main.c\
 					parent.c\
 					child.c
 
-HEADERS		=	pipex.h
+CHEADERS		=	pipex.h
 SRC			=	$(DSRC)/$(CFILES)
+HEADERS		=	$(DHEADER)/$(CHEADERS)
 OBJ			=	$(CFILES:%.c=$(DOBJ)/%.o)
 
 #####################################################

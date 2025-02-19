@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   child.c                                            :+:      :+:    :+:   */
+/*   second_child.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/18 17:20:34 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/19 11:55:20 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../header/pipex.h"
 
 static char	*ft_strjoin_improved(char *s1, char const *s2)
 {
@@ -40,7 +40,7 @@ static char	*ft_strjoin_improved(char *s1, char const *s2)
 	return (str);
 }
 
-void	process_is_child(int *pipe_fd, char **arg, char **env)
+void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 {
 	char	*from_pipe;
 	char	*path_cmd;
@@ -61,7 +61,7 @@ void	process_is_child(int *pipe_fd, char **arg, char **env)
 		}
 	}
 	//verifier que la commande existe et la recuperer dans le bon path
-	path_cmd = real_cmd(arg[2], env);
+	path_cmd = find_real_cmd(arg[2], env);
 	if (!path_cmd)
 	{
 		perror(errno);
@@ -76,12 +76,7 @@ void	process_is_child(int *pipe_fd, char **arg, char **env)
 		exit(EXIT_FAILURE);
 	}
 	//executer la commande av[3] et stocker son resultat dans le fichier av[4]
-	if (dup2(1, arg[3]) == -1)
-	{
-		/*fail*/
-	}
-	if (execve(arg[2], from_pipe, env) == -1)
-	{
-        perror("execve failed");
-    }
+
+	execve(arg[2], from_pipe, env);
+    perror("execve failed");
 }
