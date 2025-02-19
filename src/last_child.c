@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   second_child.c                                     :+:      :+:    :+:   */
+/*   last_child.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/19 11:55:20 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:09:34 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,27 +56,26 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 		from_pipe = ft_strjoin_improved(from_pipe, get_next_line(pipe_fd[0]));
 		if (!from_pipe)
 		{
-			perror(errno);
+			perror("pipe failed");
 			exit(EXIT_FAILURE);
 		}
 	}
 	//verifier que la commande existe et la recuperer dans le bon path
-	path_cmd = find_real_cmd(arg[2], env);
+	path_cmd = find_real_cmd(arg[3], env);
 	if (!path_cmd)
 	{
-		perror(errno);
+		perror("command failed");
 		exit(EXIT_FAILURE);
 	}
 	//ouvrir le fichier av[3]
-	//verifier qu'on a les droits sur le fichier
-	if (access(arg[3], R_OK)) /*the access asked depends on the command*/
+	//verifier qu'on a les droits sur la cmd
+	if (access(path_cmd, X_OK)) /*the access asked depends on the command*/
 	{
 		free(path_cmd);
-		perror(errno);
+		perror("access failed");
 		exit(EXIT_FAILURE);
 	}
 	//executer la commande av[3] et stocker son resultat dans le fichier av[4]
-
-	execve(arg[2], from_pipe, env);
+	execve(path_cmd, &arg[3], env);
     perror("execve failed");
 }

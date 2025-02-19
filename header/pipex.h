@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/19 11:55:29 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/19 15:11:01 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 #include <errno.h>
 
 /*utils.c*/
-void	free_all(char *path, char *path_cmd, char **cmd_and_flags);
+void	free_all(char **path, char **path_cmd, char **cmd_and_flags);
 char	*find_real_cmd(char *cmd, char **env);
 char	*extract_cmd(char *cmd_flag);
 /*child.c*/

@@ -1,13 +1,27 @@
 #include "../header/pipex.h"
 
-void	free_all(char *path, char *path_cmd, char **cmd_and_flags)
+void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 {
 	int	i;
 
 	if (path)
-		free(path);
+	{
+		i = 0;
+		while (path[i])
+		{
+			free(path[i]);
+			i++;
+		}
+	}
 	if (path_cmd)
-		free(path_cmd);
+	{
+		i = 0;
+		while (path_cmd[i])
+		{
+			free(path_cmd[i]);
+			i++;
+		}
+	}
 	if (cmd_and_flags)
 	{
 		i = 0;
@@ -64,7 +78,7 @@ char	*find_real_cmd(char *cmd, char **env)
 			path_index = i;
 		i++;
 	}
-	path = ft_split(env[path_index], ":"); // strings de tous les path
+	path = ft_split(env[path_index],  ':'); // strings de tous les path
 	path[0] = ft_strtrim_improved(path[0], "PATH=");
 	hypothetical_path_cmd = malloc(sizeof (char *) * i); // tableau qui va contenir tous les chemins hypothetiques
 	cmd_and_flags = ft_split(cmd, ' '); //strings de la comd et strings des flags

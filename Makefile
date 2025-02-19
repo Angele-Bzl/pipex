@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/16 16:11:34 by abarzila          #+#    #+#              #
-#    Updated: 2025/02/19 08:48:31 by abarzila         ###   ########.fr        #
+#    Updated: 2025/02/19 15:57:19 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,12 +37,12 @@ CFLAGS		=	-Wall -Wextra -Werror
 #####################################################
 #					FILES							#
 #####################################################
-CFILES			=	main.c\
-					utils.c\
-					parent.c\
-					child.c
+CFILES		=	main.c\
+				utils.c\
+				first_child.c\
+				last_child.c
 
-CHEADERS		=	pipex.h
+CHEADERS	=	pipex.h
 SRC			=	$(DSRC)/$(CFILES)
 HEADERS		=	$(DHEADER)/$(CHEADERS)
 OBJ			=	$(CFILES:%.c=$(DOBJ)/%.o)

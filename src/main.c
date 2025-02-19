@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/19 11:55:29 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:11:31 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,26 +28,29 @@ recuperer l'argument pour pour cette commande
 int	main(int ac, char **av, char **env)
 {
 	int		pipe_fd[2];
+	int		fd;
 	pid_t	pid;
-	int		i;
 
-	if (ac != 4)
-		return (1);
+	if (ac != 5)
+	return (1);
+	// printf("hello\n");
     if (pipe(pipe_fd) == -1)
 	{
+		printf("00\n");
 		perror("pipe");
         exit(EXIT_FAILURE);
     }
-
     pid = fork();
     if (pid == -1)
 	{
+		printf("01\n");
 		perror("fork");
         exit(EXIT_FAILURE);
     }
 	if (pid == 0)
 	{
-		if (dup2(1, pipe_fd[1]) == -1)
+		printf("02\n");
+		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		{
 			/*fail*/
 		}
@@ -55,7 +58,8 @@ int	main(int ac, char **av, char **env)
 	}
 	else
 	{
-		/*gerer deux trois trucs dans le parent avant de refaire un enfant avec fork*/
+		wait;
+		printf("03\n");
 		pid = fork();
 		if (pid == -1)
 		{
@@ -64,7 +68,12 @@ int	main(int ac, char **av, char **env)
 		}
 		if (pid == 0)
 		{
-			if (dup2(1, av[3]) == -1)
+			fd = open(av[4], O_APPEND);
+			if (fd == -1)
+			{
+				/*fail*/
+			}
+			if (dup2(fd, STDOUT_FILENO) == -1)
 			{
 				/*fail*/
 			}
@@ -72,7 +81,8 @@ int	main(int ac, char **av, char **env)
 		}
 		else
 		{
-
+			wait;
+			/*tout nettoyer*/
 		}
 	}
 	return (0);
