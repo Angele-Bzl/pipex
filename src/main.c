@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/19 17:11:31 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/20 16:06:52 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,62 +28,46 @@ recuperer l'argument pour pour cette commande
 int	main(int ac, char **av, char **env)
 {
 	int		pipe_fd[2];
-	int		fd;
-	pid_t	pid;
+	pid_t	pid_1;
+	pid_t	pid_2;
 
 	if (ac != 5)
-	return (1);
-	// printf("hello\n");
-    if (pipe(pipe_fd) == -1)
 	{
-		printf("00\n");
+		ft_putendl_fd("Error\nInvalid number of argument", STDERR_FILENO);
+		return(EXIT_FAILURE);
+	}
+	if (pipe(pipe_fd) == -1)
+	{
 		perror("pipe");
-        exit(EXIT_FAILURE);
-    }
-    pid = fork();
-    if (pid == -1)
+		return(EXIT_FAILURE);
+	}
+	pid_1 = fork();
+	if (pid_1 == -1)
 	{
-		printf("01\n");
-		perror("fork");
-        exit(EXIT_FAILURE);
-    }
-	if (pid == 0)
+		perror("fork pid_1");
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		return(EXIT_FAILURE);
+	}
+	if (pid_1 == 0)
 	{
-		printf("02\n");
-		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
-		{
-			/*fail*/
-		}
 		manage_cmd_first(pipe_fd, av, env);
 	}
-	else
+	waitpid(pid_1, 0, 0);
+	pid_2 = fork();
+	if (pid_2 == -1)
 	{
-		wait;
-		printf("03\n");
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
-		if (pid == 0)
-		{
-			fd = open(av[4], O_APPEND);
-			if (fd == -1)
-			{
-				/*fail*/
-			}
-			if (dup2(fd, STDOUT_FILENO) == -1)
-			{
-				/*fail*/
-			}
-			manage_cmd_last(pipe_fd, av, env);
-		}
-		else
-		{
-			wait;
-			/*tout nettoyer*/
-		}
+		perror("fork pid_2");
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		return(EXIT_FAILURE);
 	}
+	if (pid_2 == 0)
+	{
+		manage_cmd_last(pipe_fd, av, env);
+	}
+	waitpid(pid_2, 0, 0);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 	return (0);
 }
