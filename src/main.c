@@ -6,23 +6,19 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/21 11:35:48 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/21 12:05:22 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
 /*
-1	initialiser le pipe
-2	checker les arg
-ouvrir les fichiers (gere here_doc et /dev/random)
-get_next_line quoi
-3	parser la commande
-trouve le chemin de la commande avec l'environnement
-recuperer l'argument pour pour cette commande
-4	parser les arg (c'est quoi la dif avec check ?)
-5	executer les commandes
-6	tout nettoyer
+TO DO
+
+- revoir la hierarchie des fonctions entre les parents et les enfants
+- gerer les cas particuliers (chemins cachés, cmd créées manuellement)
+- anticiper les cas d'erreur (cmd invalide, fail de write...)
+- gerer une exit propre en cas d'erreur
 */
 
 int	main(int ac, char **av, char **env)
@@ -55,9 +51,6 @@ int	main(int ac, char **av, char **env)
 		manage_cmd_first(pipe_fd, av, env);
 	}
 	close(pipe_fd[1]);
-	
-	close(pipe_fd[1]);
-
 	//
 	waitpid(pid_1, 0, 0);
 	pid_2 = fork();
