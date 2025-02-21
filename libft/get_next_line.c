@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 08:02:48 by abarzila          #+#    #+#             */
-/*   Updated: 2024/12/06 15:07:31 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/21 10:02:37 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
+	return (NULL);
 	line = NULL;
 	line = create_line(buf, line, fd);
 	return (line);

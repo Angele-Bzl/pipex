@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:12:23 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/20 16:05:18 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/02/21 11:26:02 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,11 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 	char	*path_cmd;
 	int		fd;
 
-	close(pipe_fd[0]);
-	//ouvrir le premier fichier av[1]
+	if (close(pipe_fd[0]) == -1)
+	{
+		perror("(first child) pipe");
+		exit(EXIT_FAILURE);
+	}
 	fd = open(arg[1], O_RDWR);
 	if (fd == -1)
 	{
@@ -29,10 +32,8 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 		close(pipe_fd[1]);
 		exit(EXIT_FAILURE);
 	}
-	//verifier que la commande existe et la recuperer dans le bon path
-	cmd_and_flags = ft_split(arg[2], ' '); //strings de la comd et strings des flags
-	path_cmd = find_real_cmd(env, cmd_and_flags);
-	printf("(first child) %s\n", path_cmd);
+	cmd_and_flags = ft_split(arg[2], ' ');
+	path_cmd = ft_strjoin(find_real_cmd(env, cmd_and_flags), "\0");
 	if (!path_cmd)
 	{
 		close(fd);
@@ -42,7 +43,6 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 		close(pipe_fd[1]);
 		exit(EXIT_FAILURE);
 	}
-	//executer la commande arg[1] sur le fichier arg[0] le resultat part dan le pipe
 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 	{
 		perror("dup pid_1");
@@ -51,6 +51,6 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 		close(pipe_fd[1]);
 		exit(EXIT_FAILURE);
 	}
-	execve(path_cmd, cmd_and_flags, env); //arg[2] est censé etre ["ls" "-l"]
+	execve(path_cmd, cmd_and_flags, env);
     perror("(first child) execve failed");
 }
