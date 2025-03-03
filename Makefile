@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/16 16:11:34 by abarzila          #+#    #+#              #
-#    Updated: 2025/02/20 13:07:13 by abarzila         ###   ########.fr        #
+#    Updated: 2025/03/03 11:19:13 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,9 @@ OBJ			=	$(CFILES:%.c=$(DOBJ)/%.o)
 #####################################################
 #					ARCHIVES						#
 #####################################################
-LIBFT		=	libft/libft.a
+LIBFT		=	libft/libft.a\
+				libft/printf/libftprintf.a\
+				libft/printf_err/libftprintf.a\
 
 all : lib
 	$(MAKE) $(NAME)

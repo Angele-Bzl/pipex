@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 13:44:29 by abarzila          #+#    #+#              #
-#    Updated: 2025/01/20 16:32:26 by abarzila         ###   ########.fr        #
+#    Updated: 2025/03/03 11:16:26 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,6 @@ INC		=	libft.h\
 			get_next_line.h
 
 OBJ	=	$(SRC:.c=.o)
-OBJ_BONUS	=	$(BONUS:.c=.o)
 SRC	=	ft_isalpha.c\
 		ft_isdigit.c\
 		ft_isalnum.c\
@@ -53,9 +52,8 @@ SRC	=	ft_isalpha.c\
 		ft_itoa.c\
 		ft_calloc.c\
 		get_next_line.c\
-		get_next_line_utils.c
-
-BONUS = ft_lstnew_bonus.c\
+		get_next_line_utils.c\
+		ft_lstnew_bonus.c\
 		ft_lstadd_front_bonus.c\
 		ft_lstsize_bonus.c\
 		ft_lstlast_bonus.c\
@@ -66,12 +64,8 @@ BONUS = ft_lstnew_bonus.c\
 		ft_lstmap_bonus.c
 
 all: $(NAME)
-
-.bonus: $(OBJ) $(OBJ_BONUS)
-	ar rcs $(NAME) $(OBJ) $(OBJ_BONUS)
-	touch .bonus
-
-bonus: .bonus
+	$(MAKE) -C printf
+	$(MAKE) -C printf_err
 
 $(NAME): $(OBJ) $(INC) Makefile
 	ar rcs $(NAME) $(OBJ)
@@ -80,11 +74,15 @@ $(NAME): $(OBJ) $(INC) Makefile
 	$(CC) $(CFLAG) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(OBJ_BONUS) .bonus
+	rm -f $(OBJ)
+	$(MAKE) clean -C printf/
+	$(MAKE) clean -C printf_err/
 
 fclean: clean
 	rm -f $(NAME)
+	$(MAKE) fclean -C printf/
+	$(MAKE) fclean -C printf_err/
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re

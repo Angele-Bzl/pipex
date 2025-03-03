@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/21 09:01:51 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/03 10:55:27 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 # define PIPEX_H
 
 # include "../libft/libft.h"
+# include "../libft/printf/ft_printf.h"
+# include "../libft/printf_err/ft_printf_err.h"
 
 #include <sys/wait.h>
 #include <assert.h>

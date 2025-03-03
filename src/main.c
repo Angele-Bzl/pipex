@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/21 12:05:22 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/03 15:37:38 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 /*
 TO DO
 
+- les cmd qui utilisent le infile ne s'execute pas (grep, cat)
 - revoir la hierarchie des fonctions entre les parents et les enfants
 - gerer les cas particuliers (chemins cachés, cmd créées manuellement)
 - anticiper les cas d'erreur (cmd invalide, fail de write...)
@@ -52,7 +53,7 @@ int	main(int ac, char **av, char **env)
 	}
 	close(pipe_fd[1]);
 	//
-	waitpid(pid_1, 0, 0);
+
 	pid_2 = fork();
 	if (pid_2 == -1)
 	{
@@ -65,7 +66,8 @@ int	main(int ac, char **av, char **env)
 	{
 		manage_cmd_last(pipe_fd, av, env);
 	}
-	waitpid(pid_2, 0, 0);
+	waitpid(pid_1, 0, 0);
+	// waitpid(pid_2, 0, 0);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	return (0);

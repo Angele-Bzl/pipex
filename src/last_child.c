@@ -6,40 +6,11 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/02/21 11:32:45 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/03 15:19:28 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
-
-// static char	*ft_strjoin_improved(char *s1, char const *s2)
-// {
-// 	char	*str;
-// 	int		i;
-// 	int		j;
-
-// 	if (!s2)
-// 		return (NULL);
-// 	str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-// 	if (!str)
-// 		return (NULL);
-// 	i = 0;
-// 	while (s1 && s1[i])
-// 	{
-// 		str[i] = s1[i];
-// 		i++;
-// 	}
-// 	j = 0;
-// 	while (s2[j])
-// 	{
-// 		str[i + j] = s2[j];
-// 		j++;
-// 	}
-// 	str[i + j] = '\0';
-// 	free(s1);
-// 	// printf("gnl %s\n", str);
-// 	return (str);
-// }
 
 void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 {
@@ -52,8 +23,23 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 	// 	perror("(last child) pipe");
 	// 	exit(EXIT_FAILURE);
 	// }
-	cmd_and_flags = ft_split(arg[2], ' ');
+	cmd_and_flags = ft_split(arg[3], ' ');
 	path_cmd = find_real_cmd(env, cmd_and_flags);
+	// int x = 0;
+	// while (cmd_and_flags[x])
+	// {
+	// 	ft_printf_err("cmd and flags : %s\n", cmd_and_flags[x]);
+	// 	x++;
+	// }
+	// ft_printf_err("path : %s\n", path_cmd);
+	// char test[50];
+	// if (read(pipe_fd[0], test, 50) == -1)
+	// {
+	// 	ft_putendl_fd("error read", 2);
+	// }
+	// ft_printf_err("pipe : %s\n", test);
+
+
 	if (!path_cmd)
 	{
 		perror("command failed");
