@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/03 15:37:38 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/03 16:38:31 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ int	main(int ac, char **av, char **env)
 		manage_cmd_last(pipe_fd, av, env);
 	}
 	waitpid(pid_1, 0, 0);
-	// waitpid(pid_2, 0, 0);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	return (0);

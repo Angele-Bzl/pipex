@@ -12,6 +12,7 @@ void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 			free(path[i]);
 			i++;
 		}
+		// free(path);
 	}
 	if (path_cmd)
 	{
@@ -21,6 +22,7 @@ void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 			free(path_cmd[i]);
 			i++;
 		}
+		// free(path_cmd);
 	}
 	if (cmd_and_flags)
 	{
@@ -30,8 +32,43 @@ void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 			free(cmd_and_flags[i]);
 			i++;
 		}
+		// free(cmd_and_flags);
 	}
 }
+
+// static void	free_almost_all(char **path, char **path_cmd, int good, char **cmd_and_flags)
+// {
+// 	int	i;
+
+// 	if (path)
+// 	{
+// 		i = 0;
+// 		while (path[i])
+// 		{
+// 			free(path[i]);
+// 			i++;
+// 		}
+// 	}
+// 	if (path_cmd)
+// 	{
+// 		i = 0;
+// 		while (path_cmd[i])
+// 		{
+// 			if (i != good)
+// 				free(path_cmd[i]);
+// 			i++;
+// 		}
+// 	}
+// 	if (cmd_and_flags)
+// 	{
+// 		i = 0;
+// 		while (cmd_and_flags[i])
+// 		{
+// 			free(cmd_and_flags[i]);
+// 			i++;
+// 		}
+// 	}
+// }
 
 char	*find_real_cmd(char **env, char **cmd_and_flags)
 {
@@ -71,11 +108,12 @@ char	*find_real_cmd(char **env, char **cmd_and_flags)
 	{
 		if(!access(hypothetical_path_cmd[i], X_OK))
 		{
-			/*free le reste*/
+			// free_almost_all(path, hypothetical_path_cmd, i, cmd_and_flags);
 			return (hypothetical_path_cmd[i]);
 		}
 		i++;
 	}
+	free_all(path, hypothetical_path_cmd, cmd_and_flags);
 	return (NULL);
 }
 

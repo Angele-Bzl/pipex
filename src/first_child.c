@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:12:23 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/03 15:40:58 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/03 16:43:41 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,9 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 
 	cmd_and_flags = ft_split(arg[2], ' ');
 	path_cmd = ft_strjoin(find_real_cmd(env, cmd_and_flags), "\0");
+	
+	ft_printf_err("path : %s\n", path_cmd);
+
 	if (!path_cmd)
 	{
 		close(fd);

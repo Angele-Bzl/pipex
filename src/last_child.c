@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/03 15:19:28 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/03 16:43:20 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,8 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 	char	*path_cmd;
 	int		file_out;
 
-	// if (close(pipe_fd[1]) == -1)
-	// {
-	// 	perror("(last child) pipe");
-	// 	exit(EXIT_FAILURE);
-	// }
 	cmd_and_flags = ft_split(arg[3], ' ');
 	path_cmd = find_real_cmd(env, cmd_and_flags);
-	// int x = 0;
-	// while (cmd_and_flags[x])
-	// {
-	// 	ft_printf_err("cmd and flags : %s\n", cmd_and_flags[x]);
-	// 	x++;
-	// }
-	// ft_printf_err("path : %s\n", path_cmd);
-	// char test[50];
-	// if (read(pipe_fd[0], test, 50) == -1)
-	// {
-	// 	ft_putendl_fd("error read", 2);
-	// }
-	// ft_printf_err("pipe : %s\n", test);
-
-
 	if (!path_cmd)
 	{
 		perror("command failed");
