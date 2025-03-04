@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 10:53:00 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 15:58:05 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,14 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 	path_cmd = find_real_cmd(env, cmd_and_flags);
 	if (!path_cmd)
 	{
+		int i;
+		i = 0;
+		while (cmd_and_flags[i])
+		{
+			free(cmd_and_flags[i]);
+			i++;
+		}
+		free(cmd_and_flags);
 		perror("command failed");
 		exit(EXIT_FAILURE);
 	}
@@ -31,7 +39,7 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 		perror("access failed");
 		exit(EXIT_FAILURE);
 	}
-	file_out = open(arg[4], O_WRONLY | O_CREAT | O_TRUNC);
+	file_out = open(arg[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (file_out == -1)
 	{
 		perror("open pid_2");

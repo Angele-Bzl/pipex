@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 10:50:48 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 16:15:21 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,20 @@ TO DO
 - gerer une exit propre en cas d'erreur
 */
 
+static void	close_pipe_and_exit(int *pipe_fd, char *message, int fail)
+{
+	if (message)
+		perror(message);
+	if (pipe_fd)
+	{
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+	}
+	if (fail)
+		exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	int		pipe_fd[2];
@@ -33,40 +47,20 @@ int	main(int ac, char **av, char **env)
 		ft_putendl_fd("Error\nInvalid number of argument", STDERR_FILENO);
 		return (EXIT_FAILURE);
 	}
-	//
 	if (pipe(pipe_fd) == -1)
-	{
-		perror("pipe");
-		return (EXIT_FAILURE);
-	}
+		close_pipe_and_exit(NULL, "pipe", 1);
+
 	pid_1 = fork();
 	if (pid_1 == -1)
-	{
-		perror("fork pid_1");
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		return (EXIT_FAILURE);
-	}
+		close_pipe_and_exit(pipe_fd, "fork 01", 1);
 	if (pid_1 == 0)
-	{
 		manage_cmd_first(pipe_fd, av, env);
-	}
 	close(pipe_fd[1]);
-	//
 	pid_2 = fork();
 	if (pid_2 == -1)
-	{
-		perror("fork pid_2");
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		return (EXIT_FAILURE);
-	}
+		close_pipe_and_exit(pipe_fd, "fork 02", 1);
 	if (pid_2 == 0)
-	{
 		manage_cmd_last(pipe_fd, av, env);
-	}
 	waitpid(pid_1, 0, 0);
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
-	return (0);
+	close_pipe_and_exit(pipe_fd, NULL, 0);
 }

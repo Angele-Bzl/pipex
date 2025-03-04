@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 10:51:15 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 13:25:02 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 15:51:36 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,38 @@ static int	find_path(char **env)
 	return (-1);
 }
 
+char	*ft_strtrim_improved(char *s1, char const *set)
+{
+	int	start;
+	int	end;
+	int	i;
+	char	*result;
+
+	if (!s1)
+		return (malloc (0));
+	i = 0;
+	start = -1;
+	end = -2;
+	while (s1[i] && start == -1)
+	{
+		if (ft_strchr(set, s1[i]) == NULL)
+			start = i;
+		i++;
+	}
+	i = ft_strlen(s1) - 1;
+	while (i >= 0 && end == -2)
+	{
+		if (ft_strchr(set, s1[i]) == NULL)
+			end = i;
+		i--;
+	}
+	if (ft_strlen(s1) == 0)
+		return (ft_strdup(s1));
+	result = ft_substr(s1, start, (end - start) + 1);
+	free(s1);
+	return (result);
+}
+
 char	*find_real_cmd(char **env, char **cmd_and_flags)
 {
 	char	**path;
@@ -161,23 +193,19 @@ char	*find_real_cmd(char **env, char **cmd_and_flags)
 	char	*real_path;
 
 	path = ft_split(env[find_path(env)], ':');
-	path[0] = ft_strtrim(path[0], "PATH=");
+	path[0] = ft_strtrim_improved(path[0], "PATH=");
 	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(path));
 	if (!path || !hypothetical_path_cmd || !cmd_and_flags)
 	{
-		printf("1\n");
 		free_all(path, hypothetical_path_cmd, cmd_and_flags);
 		return (NULL);
 	}
 	if (init_hypothetical_path(hypothetical_path_cmd, cmd_and_flags, path) == 0)
 	{
-		printf("2\n");
 		free_all(path, hypothetical_path_cmd, cmd_and_flags);
 		return (NULL);
 	}
 	real_path = find_path_cmd(hypothetical_path_cmd, path);
-
-	printf("real path : %s\n", real_path);
 
 	int	i;
 	i = 0;
