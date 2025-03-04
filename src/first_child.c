@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:12:23 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 12:25:40 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 16:44:46 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,30 +20,13 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 	int		i;
 
 	if (close(pipe_fd[0]) == -1)
-	{
-		perror("(first child) pipe");
-		exit(EXIT_FAILURE);
-	}
+		close_pipe_and_exit(pipe_fd, "pipe", 1);
 	fd = open(arg[1], O_RDONLY);
 	if (fd == -1)
-	{
-		perror("(first child) open failed");
-		write(pipe_fd[1], "ERROR", 5);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
-	}
-
+		close_pipe_and_exit(pipe_fd, "open", 1);
 	cmd_and_flags = ft_split(arg[2], ' ');
 	if (!cmd_and_flags)
-	{
-		close(fd);
-		perror("(first child) command failed");
-		write(pipe_fd[1], "ERROR", 5);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
-	}
+		close_pipe_and_exit(pipe_fd, "command", 1);
 	path_cmd = find_real_cmd(env, cmd_and_flags);
 	if (!path_cmd)
 	{
@@ -54,30 +37,14 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 			i++;
 		}
 		free(cmd_and_flags);
-
 		close(fd);
-		perror("(first child) command failed");
-		write(pipe_fd[1], "ERROR", 5);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
-	}
-	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
-	{
-		perror("dup pid_1");
-		write(pipe_fd[1], "ERROR", 5);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
+		close_pipe_and_exit(pipe_fd, "command", 1);
 	}
 	if (dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("dup pid_1");
-		write(pipe_fd[1], "ERROR", 5);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
-	}
+		dup2_failed(fd, pipe_fd, cmd_and_flags);
+	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+		dup2_failed(fd, pipe_fd, cmd_and_flags);
 	execve(path_cmd, cmd_and_flags, env);
+	/*il faut free et close et tout aussi*/
     perror("(first child) execve failed");
 }

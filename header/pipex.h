@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 14:45:25 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 16:41:53 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,11 @@
 # include <errno.h>
 
 /*utils.c*/
-void	free_all(char **path, char **path_cmd, char **cmd_and_flags);
 char	*find_real_cmd(char **env, char **cmd_and_flags);
+/*exit.c*/
+void	free_all(char **path, char **path_cmd, char **cmd_and_flags);
+void	close_pipe_and_exit(int *pipe_fd, char *message, int fail);
+void	dup2_failed(int fd, int *pipe_fd, char **cmd_and_flags);
 /*last_child.c*/
 void	manage_cmd_last(int *pipe_fd, char **av, char **env);
 /*first_parent.c*/

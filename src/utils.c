@@ -6,81 +6,11 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 10:51:15 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 15:51:36 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 16:39:04 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
-
-void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
-{
-	int	i;
-
-	if (path)
-	{
-		i = 0;
-		while (path[i])
-		{
-			free(path[i]);
-			i++;
-		}
-		free(path);
-	}
-	if (path_cmd)
-	{
-		i = 0;
-		while (path_cmd[i])
-		{
-			free(path_cmd[i]);
-			i++;
-		}
-		free(path_cmd);
-	}
-	if (cmd_and_flags)
-	{
-		i = 0;
-		while (cmd_and_flags[i])
-		{
-			free(cmd_and_flags[i]);
-			i++;
-		}
-		free(cmd_and_flags);
-	}
-}
-
-// static void	free_almost_all(char **path, char **path_cmd, int good, char **cmd_and_flags)
-// {
-// 	int	i;
-
-// 	if (path)
-// 	{
-// 		i = 0;
-// 		while (path[i])
-// 		{
-// 			free(path[i]);
-// 			i++;
-// 		}
-// 	}
-// 	if (path_cmd)
-// 	{
-// 		i = 0;
-// 		while (path_cmd[i])
-// 		{
-// 			if (i != good)
-// 				free(path_cmd[i]);
-// 			i++;
-// 		}
-// 	}
-// 	if (cmd_and_flags)
-// 	{
-// 		i = 0;
-// 		while (cmd_and_flags[i])
-// 		{
-// 			free(cmd_and_flags[i]);
-// 			i++;
-// 		}
-// 	}
-// }
 
 static int	init_hypothetical_path(char **hypothetical_path_cmd, char **cmd_and_flags, char **path)
 {
