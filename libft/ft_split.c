@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 09:18:47 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/03 11:33:07 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 10:53:33 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ static int	fill_str(char **tab, char const *s, char c, int i)
 	return (counter);
 }
 
-#include <stdio.h>
 char	**ft_split(char const *s, char c)
 {
 	char	**tab;

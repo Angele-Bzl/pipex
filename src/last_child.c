@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/03 16:43:20 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 10:53:00 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,5 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 		exit(EXIT_FAILURE);
 	}
 	execve(path_cmd, cmd_and_flags, env);
-    perror("(last child) execve failed");
+	perror("(last child) execve failed");
 }

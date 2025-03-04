@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/03 16:38:31 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/04 10:50:48 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ int	main(int ac, char **av, char **env)
 	if (ac != 5)
 	{
 		ft_putendl_fd("Error\nInvalid number of argument", STDERR_FILENO);
-		return(EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	}
 	//
 	if (pipe(pipe_fd) == -1)
 	{
 		perror("pipe");
-		return(EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	}
 	pid_1 = fork();
 	if (pid_1 == -1)
@@ -45,7 +45,7 @@ int	main(int ac, char **av, char **env)
 		perror("fork pid_1");
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-		return(EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	}
 	if (pid_1 == 0)
 	{
@@ -53,14 +53,13 @@ int	main(int ac, char **av, char **env)
 	}
 	close(pipe_fd[1]);
 	//
-
 	pid_2 = fork();
 	if (pid_2 == -1)
 	{
 		perror("fork pid_2");
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-		return(EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	}
 	if (pid_2 == 0)
 	{

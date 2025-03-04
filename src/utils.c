@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/04 10:51:15 by abarzila          #+#    #+#             */
+/*   Updated: 2025/03/04 13:25:02 by abarzila         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../header/pipex.h"
 
 void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
@@ -12,7 +24,7 @@ void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 			free(path[i]);
 			i++;
 		}
-		// free(path);
+		free(path);
 	}
 	if (path_cmd)
 	{
@@ -22,7 +34,7 @@ void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 			free(path_cmd[i]);
 			i++;
 		}
-		// free(path_cmd);
+		free(path_cmd);
 	}
 	if (cmd_and_flags)
 	{
@@ -32,7 +44,7 @@ void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 			free(cmd_and_flags[i]);
 			i++;
 		}
-		// free(cmd_and_flags);
+		free(cmd_and_flags);
 	}
 }
 
@@ -70,50 +82,111 @@ void	free_all(char **path, char **path_cmd, char **cmd_and_flags)
 // 	}
 // }
 
-char	*find_real_cmd(char **env, char **cmd_and_flags)
+static int	init_hypothetical_path(char **hypothetical_path_cmd, char **cmd_and_flags, char **path)
 {
+	char	*path_w_backslash;
 	int		i;
-	int		path_index;
-	char	**path;
-	char	**hypothetical_path_cmd;
 
 	i = 0;
-	while (env[i]) // trouver la liste de path
+	while (path[i])
 	{
-		if (ft_strnstr(env[i], "PATH=", 5))
-			path_index = i;
-		i++;
-	}
-	path = ft_split(env[path_index],  ':'); // strings de tous les path
-	path[0] = ft_strtrim(path[0], "PATH=");
-	hypothetical_path_cmd = malloc(sizeof (char *) * i); // tableau qui va contenir tous les chemins hypothetiques
-	if (!path || !hypothetical_path_cmd || !cmd_and_flags)
-	{
-		free_all(path, hypothetical_path_cmd, cmd_and_flags);
-		return (NULL);
-	}
-	i = 0;
-	while (path[i]) //creer l'hypothese que le fichier est dans chaque path
-	{
-		hypothetical_path_cmd[i] = ft_strjoin(ft_strjoin(path[i], "/"), cmd_and_flags[0]);
+		path_w_backslash = ft_strjoin(path[i], "/");
+		if (!path_w_backslash)
+		{
+			free_all(path, hypothetical_path_cmd, cmd_and_flags);
+			return (0);
+		}
+		hypothetical_path_cmd[i] = ft_strjoin(path_w_backslash, cmd_and_flags[0]);
 		if (!hypothetical_path_cmd[i])
 		{
 			free_all(path, hypothetical_path_cmd, cmd_and_flags);
-			return (NULL);
+			free(path_w_backslash);
+			return (0);
 		}
+		free(path_w_backslash);
 		i++;
 	}
+	return (1);
+}
+
+static int	tablen(char **tab)
+{
+	int	i;
+
 	i = 0;
-	while (path[i]) // verifier que la cmd existe et qu'on a le droit de l'exec
+	while (tab[i])
+		i++;
+	return (i);
+}
+
+
+static char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
+{
+	int		i;
+	char	*real_path;
+
+	i = 0;
+	real_path = NULL;
+	while (path[i])
 	{
-		if(!access(hypothetical_path_cmd[i], X_OK))
+		if (!access(hypothetical_path_cmd[i], X_OK))
 		{
-			// free_almost_all(path, hypothetical_path_cmd, i, cmd_and_flags);
-			return (hypothetical_path_cmd[i]);
+			real_path = ft_strdup(hypothetical_path_cmd[i]);
 		}
+		free(hypothetical_path_cmd[i]);
 		i++;
 	}
-	free_all(path, hypothetical_path_cmd, cmd_and_flags);
-	return (NULL);
+	free(hypothetical_path_cmd);
+	return (real_path);
+}
+
+static int	find_path(char **env)
+{
+	int	i;
+
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strnstr(env[i], "PATH=", 5))
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+char	*find_real_cmd(char **env, char **cmd_and_flags)
+{
+	char	**path;
+	char	**hypothetical_path_cmd;
+	char	*real_path;
+
+	path = ft_split(env[find_path(env)], ':');
+	path[0] = ft_strtrim(path[0], "PATH=");
+	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(path));
+	if (!path || !hypothetical_path_cmd || !cmd_and_flags)
+	{
+		printf("1\n");
+		free_all(path, hypothetical_path_cmd, cmd_and_flags);
+		return (NULL);
+	}
+	if (init_hypothetical_path(hypothetical_path_cmd, cmd_and_flags, path) == 0)
+	{
+		printf("2\n");
+		free_all(path, hypothetical_path_cmd, cmd_and_flags);
+		return (NULL);
+	}
+	real_path = find_path_cmd(hypothetical_path_cmd, path);
+
+	printf("real path : %s\n", real_path);
+
+	int	i;
+	i = 0;
+	while (path[i])
+	{
+		free(path[i]);
+		i++;
+	}
+	free(path);
+	return (real_path);
 }
 
