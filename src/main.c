@@ -6,17 +6,32 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/05 09:28:01 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/05 14:46:20 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
+
+int start_wait(pid_t pid_1, pid_t pid_2)
+{
+	int status;
+
+	/*securiser les wait ?*/
+	waitpid(pid_1, &status, 0);
+	waitpid(pid_2, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (EXIT_SUCCESS);
+}
 
 int	main(int ac, char **av, char **env)
 {
 	int		pipe_fd[2];
 	pid_t	pid_1;
 	pid_t	pid_2;
+	int		exit_status;
 
 	if (ac != 5)
 	{
@@ -24,18 +39,18 @@ int	main(int ac, char **av, char **env)
 		return (EXIT_FAILURE);
 	}
 	if (pipe(pipe_fd) == -1)
-		close_fd_and_pipe_and_exit(0, NULL, "pipe", 1);
+		close_fd_and_pipe_and_exit(0, NULL, "pipe", EXIT_FAILURE);
 	pid_1 = fork();
 	if (pid_1 == -1)
-		close_fd_and_pipe_and_exit(0, pipe_fd, "fork 01", 1);
+		close_fd_and_pipe_and_exit(0, pipe_fd, "fork 01", EXIT_FAILURE);
 	if (pid_1 == 0)
 		manage_cmd_first(pipe_fd, av, env);
 	close(pipe_fd[1]);
 	pid_2 = fork();
 	if (pid_2 == -1)
-		close_fd_and_pipe_and_exit(0, pipe_fd, "fork 02", 1);
+		close_fd_and_pipe_and_exit(0, pipe_fd, "fork 02", EXIT_FAILURE);
 	if (pid_2 == 0)
 		manage_cmd_last(pipe_fd, av, env);
-	waitpid(pid_1, 0, 0);
-	close_fd_and_pipe_and_exit(0, pipe_fd, NULL, 0);
+	exit_status = start_wait(pid_1, pid_2);
+	close_fd_and_pipe_and_exit(0, pipe_fd, NULL, exit_status);
 }

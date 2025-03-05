@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 16:38:20 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/05 09:36:29 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/05 13:58:13 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,14 @@ void	free_all(char **path, char **hyp_path_cmd, char **cmd_and_flags, char *path
 		free(cmd_and_flags);
 	}
 	if (path_cmd)
+	{
+		printf("HELLO\n");
 		free(path_cmd);
+		path_cmd = NULL;
+	}
 }
 
-void	close_fd_and_pipe_and_exit(int fd, int *pipe_fd, char *message, int fail)
+void	 close_fd_and_pipe_and_exit(int fd, int *pipe_fd, char *message, int exit_status)
 {
 	if (message)
 		perror(message);
@@ -63,7 +67,5 @@ void	close_fd_and_pipe_and_exit(int fd, int *pipe_fd, char *message, int fail)
 		if (pipe_fd[1])
 			close(pipe_fd[1]);
 	}
-	if (fail)
-		exit(EXIT_FAILURE);
-	exit(EXIT_SUCCESS);
+	exit(exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 10:51:15 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/05 09:53:35 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/05 13:33:43 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,6 @@ void	manage_deviate_first(int fd, int *pipe_fd, char **cmd_and_flags, char *path
 	if (dup2(fd, STDIN_FILENO) == -1 || dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 	{
 		free_all(NULL, NULL, cmd_and_flags, path_cmd);
-		close_fd_and_pipe_and_exit(fd, pipe_fd, "dup2", 1);
+		close_fd_and_pipe_and_exit(fd, pipe_fd, "dup2", EXIT_FAILURE);
 	}
 }
