@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 15:58:05 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/05 09:53:04 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,48 +19,31 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 	int		file_out;
 
 	cmd_and_flags = ft_split(arg[3], ' ');
+	if (!cmd_and_flags)
+		close_fd_and_pipe_and_exit(0, pipe_fd, "malloc", 1);
 	path_cmd = find_real_cmd(env, cmd_and_flags);
 	if (!path_cmd)
 	{
-		int i;
-		i = 0;
-		while (cmd_and_flags[i])
-		{
-			free(cmd_and_flags[i]);
-			i++;
-		}
-		free(cmd_and_flags);
-		perror("command failed");
-		exit(EXIT_FAILURE);
+		free_all(NULL, NULL, cmd_and_flags, NULL);
+		close_fd_and_pipe_and_exit(0, pipe_fd, "command", 1);
 	}
 	if (access(path_cmd, X_OK))
 	{
-		free(path_cmd);
-		perror("access failed");
-		exit(EXIT_FAILURE);
+		free_all(NULL, NULL, cmd_and_flags, path_cmd);
+		close_fd_and_pipe_and_exit(0, pipe_fd, "access", 1);
 	}
 	file_out = open(arg[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (file_out == -1)
 	{
-		perror("open pid_2");
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
+		free_all(NULL, NULL, cmd_and_flags, path_cmd);
+		close_fd_and_pipe_and_exit(0, pipe_fd, "fd", 1);
 	}
-	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+	if (dup2(pipe_fd[0], STDIN_FILENO) == -1 || dup2(file_out, STDOUT_FILENO) == -1)
 	{
-		perror("dup pid_2");
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
-	}
-	if (dup2(file_out, STDOUT_FILENO) == -1)
-	{
-		perror("dup pid_2");
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exit(EXIT_FAILURE);
+		free_all(NULL, NULL, cmd_and_flags, path_cmd);
+		close_fd_and_pipe_and_exit(0, pipe_fd, "dup2", 1);
 	}
 	execve(path_cmd, cmd_and_flags, env);
-	perror("(last child) execve failed");
+	free_all(NULL, NULL, cmd_and_flags, path_cmd);
+	close_fd_and_pipe_and_exit(file_out, pipe_fd, "execve", 1);
 }

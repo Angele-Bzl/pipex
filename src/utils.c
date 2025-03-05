@@ -6,13 +6,13 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 10:51:15 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/04 16:39:04 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/05 09:53:35 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-static int	init_hypothetical_path(char **hypothetical_path_cmd, char **cmd_and_flags, char **path)
+static int	init_hyp_path(char **hyp_path, char **cmd_and_flags, char **path)
 {
 	char	*path_w_backslash;
 	int		i;
@@ -23,13 +23,13 @@ static int	init_hypothetical_path(char **hypothetical_path_cmd, char **cmd_and_f
 		path_w_backslash = ft_strjoin(path[i], "/");
 		if (!path_w_backslash)
 		{
-			free_all(path, hypothetical_path_cmd, cmd_and_flags);
+			free_all(path, hyp_path, cmd_and_flags, NULL);
 			return (0);
 		}
-		hypothetical_path_cmd[i] = ft_strjoin(path_w_backslash, cmd_and_flags[0]);
-		if (!hypothetical_path_cmd[i])
+		hyp_path[i] = ft_strjoin(path_w_backslash, cmd_and_flags[0]);
+		if (!hyp_path[i])
 		{
-			free_all(path, hypothetical_path_cmd, cmd_and_flags);
+			free_all(path, hyp_path, cmd_and_flags, NULL);
 			free(path_w_backslash);
 			return (0);
 		}
@@ -48,7 +48,6 @@ static int	tablen(char **tab)
 		i++;
 	return (i);
 }
-
 
 static char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
 {
@@ -84,15 +83,13 @@ static int	find_path(char **env)
 	return (-1);
 }
 
-char	*ft_strtrim_improved(char *s1, char const *set)
+static char	*ft_strtrim_improved(char *s1, char const *set)
 {
-	int	start;
-	int	end;
-	int	i;
+	int		start;
+	int		end;
+	int		i;
 	char	*result;
 
-	if (!s1)
-		return (malloc (0));
 	i = 0;
 	start = -1;
 	end = -2;
@@ -109,8 +106,6 @@ char	*ft_strtrim_improved(char *s1, char const *set)
 			end = i;
 		i--;
 	}
-	if (ft_strlen(s1) == 0)
-		return (ft_strdup(s1));
 	result = ft_substr(s1, start, (end - start) + 1);
 	free(s1);
 	return (result);
@@ -127,24 +122,24 @@ char	*find_real_cmd(char **env, char **cmd_and_flags)
 	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(path));
 	if (!path || !hypothetical_path_cmd || !cmd_and_flags)
 	{
-		free_all(path, hypothetical_path_cmd, cmd_and_flags);
+		free_all(path, hypothetical_path_cmd, cmd_and_flags, NULL);
 		return (NULL);
 	}
-	if (init_hypothetical_path(hypothetical_path_cmd, cmd_and_flags, path) == 0)
+	if (init_hyp_path(hypothetical_path_cmd, cmd_and_flags, path) == 0)
 	{
-		free_all(path, hypothetical_path_cmd, cmd_and_flags);
+		free_all(path, hypothetical_path_cmd, cmd_and_flags, NULL);
 		return (NULL);
 	}
 	real_path = find_path_cmd(hypothetical_path_cmd, path);
-
-	int	i;
-	i = 0;
-	while (path[i])
-	{
-		free(path[i]);
-		i++;
-	}
-	free(path);
+	free_all(path, NULL, NULL, NULL);
 	return (real_path);
 }
 
+void	manage_deviate_first(int fd, int *pipe_fd, char **cmd_and_flags, char *path_cmd)
+{
+	if (dup2(fd, STDIN_FILENO) == -1 || dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+	{
+		free_all(NULL, NULL, cmd_and_flags, path_cmd);
+		close_fd_and_pipe_and_exit(fd, pipe_fd, "dup2", 1);
+	}
+}
