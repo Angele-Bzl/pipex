@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:20:45 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 10:07:09 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/06 10:55:20 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,23 +97,11 @@ char	*find_real_cmd(char **env, char **cmd_and_flags)
 	return (real_path);
 }
 
-// int	path(char *arg, char **env, char **cmd_and_flags, char *path_cmd)
-// {
-// 	if (ft_strlen(arg) == 0)
-// 		return (EXIT_FAILURE);
-// 	cmd_and_flags = ft_split(arg, ' ');
-// 	if (!cmd_and_flags)
-// 		return (127);
-// 	path_cmd = find_real_cmd(env, cmd_and_flags);
-// 	if (!path_cmd)
-// 	{
-// 		free_all(NULL, NULL, cmd_and_flags, NULL);
-// 		return (127);
-// 	}
-// 	if (access(path_cmd, X_OK))
-// 	{
-// 		free_all(NULL, NULL, cmd_and_flags, path_cmd);
-// 		return (127);
-// 	}
-// 	return (0);
-// }
+void	manage_access(char **cmd_flags, char *path_cmd, int file, int *pipe_fd)
+{
+	if (access(path_cmd, X_OK))
+	{
+		free_all(NULL, NULL, cmd_flags, path_cmd);
+		close_all(file, pipe_fd, "access", 127);
+	}
+}

@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 10:51:15 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 10:11:46 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/06 10:54:18 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,20 @@ char	*ft_strtrim_improved(char *s1, char const *set)
 	return (result);
 }
 
-
-/*faire manage deviate last*///////////////////////////
-
-
-void	manage_deviate_first(int fd, int *pipe_fd, char **cmd_and_flags, char *path_cmd)
+void	first_dup(int fd, int *pipe_fd, char **cmd_and_flags, char *path_cmd)
 {
 	if (dup2(fd, STDIN_FILENO) == -1 || dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 	{
 		free_all(NULL, NULL, cmd_and_flags, path_cmd);
-		close_fd_and_pipe_and_exit(fd, pipe_fd, "dup2", EXIT_FAILURE);
+		close_all(fd, pipe_fd, "dup2", EXIT_FAILURE);
+	}
+}
+
+void	last_dup(int fd, int *pipe_fd, char **cmd_and_flags, char *path_cmd)
+{
+	if (dup2(pipe_fd[0], STDIN_FILENO) == -1 || dup2(fd, STDOUT_FILENO) == -1)
+	{
+		free_all(NULL, NULL, cmd_and_flags, path_cmd);
+		close_all(fd, pipe_fd, "dup2", 127);
 	}
 }
