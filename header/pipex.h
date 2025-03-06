@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/05 10:52:45 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/06 10:07:13 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,12 @@
 # include <errno.h>
 
 /*utils.c*/
-char	*find_real_cmd(char **env, char **cmd_and_flags);
 void	manage_deviate_first(int fd, int *pipe_fd, char **cmd_and_flags, char *path_cmd);
+char	*ft_strtrim_improved(char *s1, char const *set);
+int		tablen(char **tab);
+/*command*/
+char	*find_real_cmd(char **env, char **cmd_and_flags);
+// int		path(char *arg, char **env, char **cmd_and_flags, char *path_cmd);
 /*exit.c*/
 void	free_all(char **path, char **hyp_path_cmd, char **cmd_and_flags, char *path_cmd);
 void	close_fd_and_pipe_and_exit(int fd, int *pipe_fd, char *message, int exit_status);

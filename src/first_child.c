@@ -6,13 +6,11 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:12:23 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/05 15:29:18 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/06 10:06:59 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
-
-
 
 void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 {
@@ -25,14 +23,10 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 	if (fd == -1)
 		close_fd_and_pipe_and_exit(fd, pipe_fd, "open", EXIT_FAILURE);
 	if (ft_strlen(arg[2]) == 0)
-	{
 		close_fd_and_pipe_and_exit(fd, pipe_fd, "command", EXIT_FAILURE);
-	}
 	cmd_and_flags = ft_split(arg[2], ' ');
 	if (!cmd_and_flags)
-	{
 		close_fd_and_pipe_and_exit(fd, pipe_fd, "malloc", EXIT_FAILURE);
-	}
 	path_cmd = find_real_cmd(env, cmd_and_flags);
 	if (!path_cmd)
 	{

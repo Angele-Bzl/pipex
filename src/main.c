@@ -6,19 +6,20 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/05 14:46:20 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/06 09:14:23 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 
-int start_wait(pid_t pid_1, pid_t pid_2)
+static int start_wait(pid_t pid_1, pid_t pid_2, int *pipe_fd)
 {
 	int status;
 
-	/*securiser les wait ?*/
-	waitpid(pid_1, &status, 0);
-	waitpid(pid_2, &status, 0);
+	if (waitpid(pid_1, &status, 0) == -1)
+		close_fd_and_pipe_and_exit(0, pipe_fd, "wait", EXIT_FAILURE);
+	if (waitpid(pid_2, &status, 0) == -1)
+		close_fd_and_pipe_and_exit(0, pipe_fd, "wait", EXIT_FAILURE);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
@@ -51,6 +52,6 @@ int	main(int ac, char **av, char **env)
 		close_fd_and_pipe_and_exit(0, pipe_fd, "fork 02", EXIT_FAILURE);
 	if (pid_2 == 0)
 		manage_cmd_last(pipe_fd, av, env);
-	exit_status = start_wait(pid_1, pid_2);
+	exit_status = start_wait(pid_1, pid_2, pipe_fd);
 	close_fd_and_pipe_and_exit(0, pipe_fd, NULL, exit_status);
 }
