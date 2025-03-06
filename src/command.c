@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:20:45 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 10:55:20 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/06 14:26:03 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,6 @@ void	manage_access(char **cmd_flags, char *path_cmd, int file, int *pipe_fd)
 	if (access(path_cmd, X_OK))
 	{
 		free_all(NULL, NULL, cmd_flags, path_cmd);
-		close_all(file, pipe_fd, "access", 127);
+		close_all_exit(file, pipe_fd, "access", 127);
 	}
 }

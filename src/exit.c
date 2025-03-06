@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 16:38:20 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 12:23:27 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/06 14:26:03 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	free_all(char **path, char **hyp_path, char **cmd_flag, char *path_cmd)
 		free(path_cmd);
 }
 
-void	close_all(int fd, int *pipe_fd, char *message, int exit_status)
+void	close_all_exit(int fd, int *pipe_fd, char *message, int exit_status)
 {
 	if (message)
 	{
