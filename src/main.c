@@ -6,11 +6,12 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 10:54:18 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/07 11:31:56 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
+#include <sys/wait.h>
 
 static int	start_wait(pid_t pid_1, pid_t pid_2, int *pipe_fd)
 {
@@ -43,13 +44,13 @@ int	main(int ac, char **av, char **env)
 		close_all(0, NULL, "pipe", EXIT_FAILURE);
 	pid_1 = fork();
 	if (pid_1 == -1)
-		close_all(0, pipe_fd, "fork 01", EXIT_FAILURE);
+		close_all(0, pipe_fd, "fork", EXIT_FAILURE);
 	if (pid_1 == 0)
 		manage_cmd_first(pipe_fd, av, env);
 	close(pipe_fd[1]);
 	pid_2 = fork();
 	if (pid_2 == -1)
-		close_all(0, pipe_fd, "fork 02", EXIT_FAILURE);
+		close_all(0, pipe_fd, "fork", EXIT_FAILURE);
 	if (pid_2 == 0)
 		manage_cmd_last(pipe_fd, av, env);
 	exit_status = start_wait(pid_1, pid_2, pipe_fd);

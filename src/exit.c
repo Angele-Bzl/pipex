@@ -6,11 +6,12 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 16:38:20 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 12:23:27 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/07 11:37:36 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
+#include <stdio.h>
 
 void	free_tab(char **tab)
 {

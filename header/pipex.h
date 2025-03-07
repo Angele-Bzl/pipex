@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 11:24:27 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/07 11:34:29 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,6 @@
 # include "../libft/libft.h"
 # include "../libft/printf/ft_printf.h"
 # include "../libft/printf_err/ft_printf_err.h"
-
-# include <sys/wait.h>
-# include <assert.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <string.h>
-# include <fcntl.h>
-# include <errno.h>
 
 /*utils.c*/
 void	first_dup(int fd, int *pipe_fd, char **cmd_and_flags, char *path_cmd);

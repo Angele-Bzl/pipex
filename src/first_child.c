@@ -6,11 +6,12 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:12:23 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 12:23:39 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/07 11:37:44 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
+#include <fcntl.h>
 
 void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 {
