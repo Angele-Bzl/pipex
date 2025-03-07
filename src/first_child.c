@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:12:23 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/07 11:41:51 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/07 12:11:51 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ void	manage_cmd_first(int *pipe_fd, char **arg, char **env)
 	}
 	manage_access(cmd_and_flags, path_cmd, fd, pipe_fd);
 	first_dup(fd, pipe_fd, cmd_and_flags, path_cmd);
-	close(pipe_fd[1]);
-	close(fd);
 	execve(path_cmd, cmd_and_flags, env);
 	free_all(NULL, NULL, cmd_and_flags, path_cmd);
 	close_all(fd, pipe_fd, "execve", EXIT_FAILURE);

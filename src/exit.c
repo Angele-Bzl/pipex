@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 16:38:20 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/07 11:37:36 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/07 12:08:12 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,30 @@ void	close_all(int fd, int *pipe_fd, char *message, int exit_status)
 			close(pipe_fd[1]);
 	}
 	exit(exit_status);
+}
+
+static int	start_wait(pid_t pid_1, pid_t pid_2, int *pipe_fd)
+{
+	int	status;
+
+	if (waitpid(pid_1, &status, 0) == -1)
+		close_all(0, pipe_fd, "wait", EXIT_FAILURE);
+	if (waitpid(pid_2, &status, 0) == -1)
+		close_all(0, pipe_fd, "wait", EXIT_FAILURE);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (EXIT_SUCCESS);
+}
+
+void	leave_program(pid_t pid_1, pid_t pid_2, int *pipe_fd)
+{
+	int		exit_status;
+
+	close(0);
+	close(1);
+	close(2);
+	exit_status = start_wait(pid_1, pid_2, pipe_fd);
+	close_all(0, pipe_fd, NULL, exit_status);
 }
