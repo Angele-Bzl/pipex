@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/07 11:31:56 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/07 11:41:05 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ int	main(int ac, char **av, char **env)
 		close_all(0, pipe_fd, "fork", EXIT_FAILURE);
 	if (pid_2 == 0)
 		manage_cmd_last(pipe_fd, av, env);
+	close(0);
+	close(1);
+	close(2);
 	exit_status = start_wait(pid_1, pid_2, pipe_fd);
 	close_all(0, pipe_fd, NULL, exit_status);
 }
