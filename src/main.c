@@ -5,37 +5,277 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/13 14:45:07 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/10 15:00:32 by abarzila         ###   ########.fr       */
+/*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
+/*   Updated: 2025/03/11 11:45:58 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
+#include <fcntl.h>
+
+static int	tablen(char **tab)
+{
+	int	i;
+
+	i = 0;
+	while (tab[i])
+		i++;
+	return (i);
+}
+
+static char	*ft_strtrim_improved(char *s1, char const *set)
+{
+	int		start;
+	int		end;
+	int		i;
+	char	*result;
+
+	i = 0;
+	start = -1;
+	end = -2;
+	while (s1[i] && start == -1)
+	{
+		if (ft_strchr(set, s1[i]) == NULL)
+			start = i;
+		i++;
+	}
+	i = ft_strlen(s1) - 1;
+	while (i >= 0 && end == -2)
+	{
+		if (ft_strchr(set, s1[i]) == NULL)
+			end = i;
+		i--;
+	}
+	result = ft_substr(s1, start, (end - start) + 1);
+	free(s1);
+	return (result);
+}
+
+static int	init_hyp_path(char **hyp_path, char **cmd_and_flags, char **path)
+{
+	char	*path_w_backslash;
+	int		i;
+
+	i = 0;
+	while (path[i])
+	{
+		path_w_backslash = ft_strjoin(path[i], "/");
+		if (!path_w_backslash)
+		{
+			/*fail*/
+		}
+		hyp_path[i] = ft_strjoin(path_w_backslash, cmd_and_flags[0]);
+		if (!hyp_path[i])
+		{
+			/*fail*/
+		}
+		free(path_w_backslash);
+		i++;
+	}
+	return (1);
+}
+
+static char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
+{
+	int		i;
+	char	*real_path;
+
+	i = 0;
+	real_path = NULL;
+	while (path[i])
+	{
+		if (!access(hypothetical_path_cmd[i], X_OK))
+		{
+			real_path = ft_strdup(hypothetical_path_cmd[i]);
+		}
+		free(hypothetical_path_cmd[i]);
+		i++;
+	}
+	free(hypothetical_path_cmd);
+	hypothetical_path_cmd = NULL;
+	return (real_path);
+}
+
+static int	find_path(char **env)
+{
+	int	i;
+
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strnstr(env[i], "PATH=", 5))
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+static void	free_tab(char **tab)
+{
+	int	i;
+
+	i = 0;
+	while (tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
+
+static char	*find_real_cmd(char **env, char **cmd_and_flags)
+{
+	char	**path;
+	char	**hypothetical_path_cmd;
+	char	*real_path;
+
+	path = ft_split(env[find_path(env)], ':');
+	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(path));
+	if (!path || !hypothetical_path_cmd || !cmd_and_flags)
+	{
+		/*fail*/
+	}
+	path[0] = ft_strtrim_improved(path[0], "PATH=");
+	if (!path[0])
+	{
+		/*fail*/
+	}
+	if (init_hyp_path(hypothetical_path_cmd, cmd_and_flags, path) == 0)
+	{
+		/*fail*/
+	}
+	real_path = find_path_cmd(hypothetical_path_cmd, path);
+	free_tab(path);
+	return (real_path);
+}
+
+static void	manage_child(char *cmd, char **env)
+{
+	char	**cmd_and_flags;
+	char	*path_cmd;
+
+	if (ft_strlen(cmd) == 0)
+	{
+		/*fail*/
+	}
+	cmd_and_flags = ft_split(cmd, ' ');
+	if (!cmd_and_flags)
+	{
+		/*fail*/
+	}
+	path_cmd = find_real_cmd(env, cmd_and_flags);
+	if (!path_cmd)
+	{
+		/*fail*/
+	}
+	if (access(path_cmd, X_OK))
+	{
+		/*fail*/
+	}
+	if (execve(path_cmd, cmd_and_flags, env) == -1)
+	{
+		/*fail*/
+	}
+}
+
+static void	manage_first_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
+{
+	int	infile;
+
+	if (pipe(pipe_fd) == -1)
+	{
+		/*fail*/
+	}
+	pid[0] = fork();
+	if (pid[0] == -1)
+	{
+		/*fail*/
+	}
+	if (pid[0] == 0)
+	{
+		infile = open(av[1], O_RDONLY);
+		if (infile == -1)
+		{
+			/*fail*/
+		}
+		if (dup2(infile, STDIN_FILENO) == -1 || dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+		{
+			/*fail*/
+		}
+		manage_child(av[2], env);
+	}
+}
+
+static void	manage_last_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
+{
+	int	outfile;
+
+	pid[1] = fork();
+	if (pid[1] == -1)
+	{
+		/*fail*/
+	}
+	if (pid[1] == 0)
+	{
+		outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (outfile == -1)
+		{
+			/*fail*/
+		}
+		if (dup2(pipe_fd[0], STDIN_FILENO) == -1 || dup2(outfile, STDOUT_FILENO) == -1)
+		{
+			/*fail*/
+		}
+		close(pipe_fd[1]);
+		manage_child(av[3], env);
+	}
+}
+
+static int	wait_for_pid(pid_t *pid)
+{
+	int	i;
+	int	status;
+
+	i = 0;
+	while (pid[i])
+	{
+		if (waitpid(pid[i], &status, 0) == -1)
+		{
+			/*fail*/
+		}
+		i++;
+	}
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (EXIT_SUCCESS);
+}
+static void	exit_program(int exit_status)
+{
+	/*free*/
+	/*close*/
+	exit(exit_status);
+}
 
 int	main(int ac, char **av, char **env)
 {
 	int		pipe_fd[2];
-	pid_t	pid_1;
-	pid_t	pid_2;
+	pid_t	pid[2];
+	int		exit_status;
 
-	if (ac != 5)
+	if (ac < 5)
 	{
 		ft_putendl_fd("Error\nInvalid number of argument", STDERR_FILENO);
 		return (EXIT_FAILURE);
 	}
-	if (pipe(pipe_fd) == -1)
-		close_all(0, NULL, "pipe", EXIT_FAILURE);
-	pid_1 = fork();
-	if (pid_1 == -1)
-		close_all(0, pipe_fd, "fork", EXIT_FAILURE);
-	if (pid_1 == 0)
-		manage_cmd_first(pipe_fd, av, env);
-	pid_2 = fork();
-	if (pid_2 == -1)
-		close_all(0, pipe_fd, "fork", EXIT_FAILURE);
-	if (pid_2 == 0)
-		manage_cmd_last(pipe_fd, av, env);
-	close(3);
-	close(4);
-	leave_program(pid_1, pid_2, pipe_fd);
+	if (!env || !env[0])
+	{
+		ft_putendl_fd("Error\nNo environment", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
+	manage_first_cmd(pipe_fd, av, env, pid);
+	manage_last_cmd(pipe_fd, av, env, pid);
+	exit_status = wait_for_pid(pid);
+	exit_program(exit_status);
 }
