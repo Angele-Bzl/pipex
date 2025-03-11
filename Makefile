@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/16 16:11:34 by abarzila          #+#    #+#              #
-#    Updated: 2025/03/11 11:37:24 by abarzila         ###   ########.fr        #
+#    Updated: 2025/03/11 14:41:38 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,6 +38,7 @@ CFLAGS		=	-Wall -Wextra -Werror
 #					FILES							#
 #####################################################
 CFILES		=	main.c\
+				utils.c
 
 CHEADERS	=	pipex.h
 SRC			=	$(DSRC)/$(CFILES)

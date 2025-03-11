@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/11 14:16:46 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/11 14:57:21 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,43 +15,8 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
-static int	tablen(char **tab)
-{
-	int	i;
 
-	i = 0;
-	while (tab[i])
-		i++;
-	return (i);
-}
 
-static char	*ft_strtrim_improved(char *s1, char const *set)
-{
-	int		start;
-	int		end;
-	int		i;
-	char	*result;
-
-	i = 0;
-	start = -1;
-	end = -2;
-	while (s1[i] && start == -1)
-	{
-		if (ft_strchr(set, s1[i]) == NULL)
-			start = i;
-		i++;
-	}
-	i = ft_strlen(s1) - 1;
-	while (i >= 0 && end == -2)
-	{
-		if (ft_strchr(set, s1[i]) == NULL)
-			end = i;
-		i--;
-	}
-	result = ft_substr(s1, start, (end - start) + 1);
-	free(s1);
-	return (result);
-}
 
 static int	init_hyp_path(char **hyp_path, char **cmd_and_flags, char **path)
 {
@@ -64,12 +29,14 @@ static int	init_hyp_path(char **hyp_path, char **cmd_and_flags, char **path)
 		path_w_backslash = ft_strjoin(path[i], "/");
 		if (!path_w_backslash)
 		{
-			/*fail*/
+			ft_putendl_fd("malloc failed", STDERR_FILENO);
+			return (0);
 		}
 		hyp_path[i] = ft_strjoin(path_w_backslash, cmd_and_flags[0]);
 		if (!hyp_path[i])
 		{
-			/*fail*/
+			ft_putendl_fd("malloc failed", STDERR_FILENO);
+			return (0);
 		}
 		free(path_w_backslash);
 		i++;
@@ -112,19 +79,6 @@ static int	find_path(char **env)
 	return (-1);
 }
 
-static void	free_tab(char **tab)
-{
-	int	i;
-
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-}
-
 static char	*find_real_cmd(char **env, char **cmd_and_flags)
 {
 	char	**path;
@@ -132,54 +86,67 @@ static char	*find_real_cmd(char **env, char **cmd_and_flags)
 	char	*real_path;
 
 	path = ft_split(env[find_path(env)], ':');
-	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(path));
-	if (!path || !hypothetical_path_cmd || !cmd_and_flags)
+	if (!path)
 	{
-		/*fail*/
+		ft_putendl_fd("malloc failed", STDERR_FILENO);
+		return (NULL);
 	}
 	path[0] = ft_strtrim_improved(path[0], "PATH=");
 	if (!path[0])
 	{
-		/*fail*/
+		free_tab(*path + 1);
+		ft_putendl_fd("malloc failed", STDERR_FILENO);
+		return (NULL);
+	}
+	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(path));
+	if (!hypothetical_path_cmd)
+	{
+		free_tab(path);
+		ft_putendl_fd("malloc failed", STDERR_FILENO);
+		return (NULL);
 	}
 	if (init_hyp_path(hypothetical_path_cmd, cmd_and_flags, path) == 0)
 	{
-		/*fail*/
+		// free_tab(*path + 1);
+		// free_tab(hypothetical_path_cmd);
+		// ft_putendl_fd("malloc failed", STDERR_FILENO);
+		return (NULL);
 	}
 	real_path = find_path_cmd(hypothetical_path_cmd, path);
 	free_tab(path);
 	return (real_path);
 }
 
-static void	manage_child(char *cmd, char **env)
+static int	manage_child(char *cmd, char **env)
 {
 	char	**cmd_and_flags;
 	char	*path_cmd;
 
 	if (ft_strlen(cmd) == 0)
 	{
-		ft_printf_err("hello\n");
-		/*fail*/
+		ft_putendl_fd("permission denied", STDERR_FILENO);
+		return (-1);
 	}
 	cmd_and_flags = ft_split(cmd, ' ');
 	if (!cmd_and_flags)
 	{
-		ft_printf_err("hello\n");
-		/*fail*/
+		ft_putendl_fd("malloc failed", STDERR_FILENO);
+		return (-1);
 	}
 	path_cmd = find_real_cmd(env, cmd_and_flags);
 	if (!path_cmd)
 	{
-		ft_printf_err("hello\n");
-		/*fail*/
+		return (-1);
 	}
 	if (access(path_cmd, X_OK))
 	{
 		/*fail*/
+		return (-1);
 	}
 	if (execve(path_cmd, cmd_and_flags, env) == -1)
 	{
 		/*fail*/
+		return (-1);
 	}
 }
 
@@ -189,26 +156,43 @@ static void	manage_first_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 
 	if (pipe(pipe_fd) == -1)
 	{
-		/*fail*/
+		perror("pipe");
+		exit(EXIT_FAILURE);
 	}
 	pid[0] = fork();
 	if (pid[0] == -1)
 	{
-		/*fail*/
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		perror("fork");
+		exit(EXIT_FAILURE);
 	}
 	if (pid[0] == 0)
 	{
 		infile = open(av[1], O_RDONLY);
 		if (infile == -1)
 		{
-			/*fail*/
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
+			perror("open");
+			exit(EXIT_FAILURE);
 		}
 		if (dup2(infile, STDIN_FILENO) == -1 || dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		{
-			/*fail*/
+			close(infile);
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
+			perror("dup2");
+			exit(EXIT_FAILURE);
 		}
 		close(pipe_fd[0]);
-		manage_child(av[2], env);
+		if (manage_child(av[2], env) == -1)
+		{
+			close(infile);
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
@@ -257,12 +241,6 @@ static int	wait_for_pid(pid_t *pid)
 		return (128 + WTERMSIG(status));
 	return (EXIT_SUCCESS);
 }
-static void	exit_program(int exit_status)
-{
-	/*free*/
-	/*close*/
-	exit(exit_status);
-}
 
 int	main(int ac, char **av, char **env)
 {
@@ -285,5 +263,5 @@ int	main(int ac, char **av, char **env)
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	exit_status = wait_for_pid(pid);
-	exit_program(exit_status);
+	exit(exit_status);
 }
