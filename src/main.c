@@ -6,12 +6,14 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/11 11:45:58 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/11 14:16:46 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 #include <fcntl.h>
+#include <stdio.h>
+#include <sys/wait.h>
 
 static int	tablen(char **tab)
 {
@@ -156,16 +158,19 @@ static void	manage_child(char *cmd, char **env)
 
 	if (ft_strlen(cmd) == 0)
 	{
+		ft_printf_err("hello\n");
 		/*fail*/
 	}
 	cmd_and_flags = ft_split(cmd, ' ');
 	if (!cmd_and_flags)
 	{
+		ft_printf_err("hello\n");
 		/*fail*/
 	}
 	path_cmd = find_real_cmd(env, cmd_and_flags);
 	if (!path_cmd)
 	{
+		ft_printf_err("hello\n");
 		/*fail*/
 	}
 	if (access(path_cmd, X_OK))
@@ -202,6 +207,7 @@ static void	manage_first_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 		{
 			/*fail*/
 		}
+		close(pipe_fd[0]);
 		manage_child(av[2], env);
 	}
 }
@@ -264,7 +270,7 @@ int	main(int ac, char **av, char **env)
 	pid_t	pid[2];
 	int		exit_status;
 
-	if (ac < 5)
+	if (ac != 5)
 	{
 		ft_putendl_fd("Error\nInvalid number of argument", STDERR_FILENO);
 		return (EXIT_FAILURE);
@@ -276,6 +282,8 @@ int	main(int ac, char **av, char **env)
 	}
 	manage_first_cmd(pipe_fd, av, env, pid);
 	manage_last_cmd(pipe_fd, av, env, pid);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 	exit_status = wait_for_pid(pid);
 	exit_program(exit_status);
 }
