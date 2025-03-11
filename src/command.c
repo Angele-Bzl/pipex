@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:20:45 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/06 10:55:20 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/10 13:44:27 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	init_hyp_path(char **hyp_path, char **cmd_and_flags, char **path)
 	return (1);
 }
 
-static char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
+char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
 {
 	int		i;
 	char	*real_path;
@@ -56,6 +56,7 @@ static char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
 		i++;
 	}
 	free(hypothetical_path_cmd);
+	hypothetical_path_cmd = NULL;
 	return (real_path);
 }
 

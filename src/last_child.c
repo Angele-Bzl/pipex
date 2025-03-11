@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 16:04:01 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/07 12:11:43 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/10 12:56:20 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	manage_cmd_last(int *pipe_fd, char **arg, char **env)
 	{
 		free_all(NULL, NULL, cmd_and_flags, NULL);
 		ft_printf_err("%s: command not found\n", arg[3]);
-		close_all(outfile, pipe_fd, "path", 127);
+		close_all(outfile, pipe_fd, NULL, 127);
 	}
 	manage_access(cmd_and_flags, path_cmd, outfile, pipe_fd);
 	last_dup(outfile, pipe_fd, cmd_and_flags, path_cmd);
