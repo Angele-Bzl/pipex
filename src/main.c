@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/12 10:58:00 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/12 11:35:44 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,26 +85,15 @@ static char	*find_real_cmd(char **env, char **cmd_and_flags)
 
 	env_path = ft_split(env[find_path_in_env(env)], ':');
 	if (!env_path)
-	{
 		return (NULL);
-	}
 	env_path[0] = ft_strtrim_improved(env_path[0], "PATH=");
 	if (!env_path[0])
-	{
-		free_tab(env_path);
-		return (NULL);
-	}
+		return (free_tab(env_path), NULL);
 	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(env_path));
 	if (!hypothetical_path_cmd)
-	{
-		free_tab(env_path);
-		return (NULL);
-	}
+		return (free_tab(env_path), NULL);
 	if (init_hyp_path(hypothetical_path_cmd, cmd_and_flags, env_path) == 0)
-	{
-		free(env_path);
-		return (NULL);
-	}
+		return (free(env_path), NULL);
 	real_path = check_if_cmd_exists(hypothetical_path_cmd, env_path);
 	free_tab(env_path);
 	return (real_path);
@@ -183,7 +172,6 @@ static void	manage_first_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 		close(infile);
 		if (manage_child(av[2], env) == -1)
 		{
-			close(infile);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -224,7 +212,6 @@ static void	manage_last_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 		close(outfile);
 		if (manage_child(av[3], env) == -1)
 		{
-			close(outfile);
 			exit(127);
 		}
 	}
@@ -236,11 +223,12 @@ static int	wait_for_pid(pid_t *pid)
 	int	status;
 
 	i = 0;
-	while (pid[i])
+	while (i < 2)
 	{
 		if (waitpid(pid[i], &status, 0) == -1)
 		{
-			/*fail*/
+			perror("wait");
+			exit(EXIT_FAILURE);
 		}
 		i++;
 	}
