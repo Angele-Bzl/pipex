@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 14:18:12 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/11 14:19:04 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/12 13:30:31 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,27 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
+
+void	close_perror_exit(int *pipe_fd, int fd, char *message, int exit_status)
+{
+	if (pipe_fd)
+	{
+		if (pipe_fd[0])
+			close(pipe_fd[0]);
+		if (pipe_fd[1])
+			close(pipe_fd[1]);
+	}
+	if (fd)
+		close(fd);
+	perror(message);
+	exit(exit_status);
+}
+
+void	putendl_exit(char *message, int exit_status)
+{
+	ft_putendl_fd(message, STDERR_FILENO);
+	exit(exit_status);
+}
 
 int	tablen(char **tab)
 {
