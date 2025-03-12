@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 14:18:12 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/12 13:30:31 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/12 15:29:07 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,29 @@ int	tablen(char **tab)
 	return (i);
 }
 
-void	free_tab(char **tab)
+char	*free_tab(char **tab)
 {
 	int	i;
 
 	i = 0;
-	while (tab[i])
+	if (tab && tab[i])
 	{
 		free(tab[i]);
+		tab[i] = NULL;
+	}
+	i++;
+	while (tab && tab[i])
+	{
+		free(tab[i]);
+		tab[i] = NULL;
 		i++;
 	}
-	free(tab);
+	if (tab)
+	{
+		free(tab);
+		tab = NULL;
+	}
+	return (NULL);
 }
 
 char	*ft_strtrim_improved(char *s1, char const *set)

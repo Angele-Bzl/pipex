@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 13:37:49 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/12 13:39:49 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/12 15:51:20 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ static int	init_hyp_path(char **hyp_path, char **cmd_flags, char **env_path)
 	i = 0;
 	while (env_path[i])
 	{
-		path_w_backslash = ft_strjoin(env_path[i], "/");
+		if(i == 3)
+			path_w_backslash = NULL;//ft_strjoin(env_path[i], "/");
+		else
+			path_w_backslash = ft_strjoin(env_path[i], "/");
 		if (!path_w_backslash)
 		{
 			free_tab(hyp_path);
@@ -88,12 +91,14 @@ char	*find_real_cmd(char **env, char **cmd_and_flags)
 		return (NULL);
 	env_path[0] = ft_strtrim_improved(env_path[0], "PATH=");
 	if (!env_path[0])
-		return (free_tab(env_path), NULL);
+		return (free_tab(env_path));
 	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(env_path));
 	if (!hypothetical_path_cmd)
-		return (free_tab(env_path), NULL);
+		return (free_tab(env_path));
 	if (init_hyp_path(hypothetical_path_cmd, cmd_and_flags, env_path) == 0)
-		return (free(env_path), NULL);
+	{
+		return (free_tab(env_path));
+	}
 	real_path = check_if_cmd_exists(hypothetical_path_cmd, env_path);
 	free_tab(env_path);
 	return (real_path);
