@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/11 16:48:39 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/12 10:58:00 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,14 @@ static int	init_hyp_path(char **hyp_path, char **cmd_and_flags, char **env_path)
 		path_w_backslash = ft_strjoin(env_path[i], "/");
 		if (!path_w_backslash)
 		{
-			ft_putendl_fd("malloc failed", STDERR_FILENO);
+			free_tab(hyp_path);
 			return (0);
 		}
 		hyp_path[i] = ft_strjoin(path_w_backslash, cmd_and_flags[0]);
 		if (!hyp_path[i])
 		{
-			ft_putendl_fd("malloc failed", STDERR_FILENO);
+			free(path_w_backslash);
+			free_tab(hyp_path);
 			return (0);
 		}
 		free(path_w_backslash);
@@ -41,7 +42,7 @@ static int	init_hyp_path(char **hyp_path, char **cmd_and_flags, char **env_path)
 	return (1);
 }
 
-static char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
+static char	*check_if_cmd_exists(char **hypothetical_path_cmd, char **path)
 {
 	int		i;
 	char	*real_path;
@@ -62,7 +63,7 @@ static char	*find_path_cmd(char **hypothetical_path_cmd, char **path)
 	return (real_path);
 }
 
-static int	find_path(char **env)
+static int	find_path_in_env(char **env)
 {
 	int	i;
 
@@ -82,34 +83,29 @@ static char	*find_real_cmd(char **env, char **cmd_and_flags)
 	char	**hypothetical_path_cmd;
 	char	*real_path;
 
-	env_path = ft_split(env[find_path(env)], ':');
+	env_path = ft_split(env[find_path_in_env(env)], ':');
 	if (!env_path)
 	{
-		ft_putendl_fd("malloc failed", STDERR_FILENO);
 		return (NULL);
 	}
 	env_path[0] = ft_strtrim_improved(env_path[0], "PATH=");
 	if (!env_path[0])
 	{
 		free_tab(env_path);
-		ft_putendl_fd("malloc failed", STDERR_FILENO);
 		return (NULL);
 	}
 	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(env_path));
 	if (!hypothetical_path_cmd)
 	{
 		free_tab(env_path);
-		ft_putendl_fd("malloc failed", STDERR_FILENO);
 		return (NULL);
 	}
 	if (init_hyp_path(hypothetical_path_cmd, cmd_and_flags, env_path) == 0)
 	{
-		// free_tab(*path + 1);
-		// free_tab(hypothetical_path_cmd);
-		// ft_putendl_fd("malloc failed", STDERR_FILENO);
+		free(env_path);
 		return (NULL);
 	}
-	real_path = find_path_cmd(hypothetical_path_cmd, env_path);
+	real_path = check_if_cmd_exists(hypothetical_path_cmd, env_path);
 	free_tab(env_path);
 	return (real_path);
 }
@@ -130,19 +126,18 @@ static int	manage_child(char *cmd, char **env)
 		ft_putendl_fd("malloc failed", STDERR_FILENO);
 		return (-1);
 	}
-	path_cmd = find_real_cmd(env, cmd_and_flags);/////////////////
+	path_cmd = find_real_cmd(env, cmd_and_flags);
 	if (!path_cmd)
 	{
-		return (-1);
-	}
-	if (access(path_cmd, X_OK))
-	{
-		/*fail*/
+		free_tab(cmd_and_flags);
+		ft_putendl_fd("command failed", STDERR_FILENO);
 		return (-1);
 	}
 	if (execve(path_cmd, cmd_and_flags, env) == -1)
 	{
-		/*fail*/
+		free(path_cmd);
+		free_tab(cmd_and_flags);
+		ft_putendl_fd("execution failed", STDERR_FILENO);
 		return (-1);
 	}
 	return (0);
@@ -189,8 +184,6 @@ static void	manage_first_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 		if (manage_child(av[2], env) == -1)
 		{
 			close(infile);
-			close(pipe_fd[0]);
-			close(pipe_fd[1]);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -203,23 +196,37 @@ static void	manage_last_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 	pid[1] = fork();
 	if (pid[1] == -1)
 	{
-		/*fail*/
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		perror("fork");
+		exit(EXIT_FAILURE);
 	}
 	if (pid[1] == 0)
 	{
 		outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (outfile == -1)
 		{
-			/*fail*/
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
+			perror("open");
+			exit(EXIT_FAILURE);
 		}
 		if (dup2(pipe_fd[0], STDIN_FILENO) == -1 || dup2(outfile, STDOUT_FILENO) == -1)
 		{
-			/*fail*/
+			close(outfile);
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
+			perror("dup2");
+			exit(EXIT_FAILURE);
 		}
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 		close(outfile);
-		manage_child(av[3], env);
+		if (manage_child(av[3], env) == -1)
+		{
+			close(outfile);
+			exit(127);
+		}
 	}
 }
 
