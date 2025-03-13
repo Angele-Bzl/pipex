@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/16 16:11:34 by abarzila          #+#    #+#              #
-#    Updated: 2025/03/12 14:23:21 by abarzila         ###   ########.fr        #
+#    Updated: 2025/03/13 11:17:36 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,10 +24,10 @@ CC			=	cc
 #####################################################
 #					DIRECTORY						#
 #####################################################
-DLIBFT		=	libft
-DSRC		=	src
-DOBJ		=	obj
-DHEADER		=	header
+DLIBFT			=	libft
+DSRC			=	src
+DOBJ			=	obj
+DHEADER			=	header
 
 #####################################################
 #					FLAGS							#
@@ -45,6 +45,22 @@ CHEADERS	=	pipex.h
 SRC			=	$(DSRC)/$(CFILES)
 HEADERS		=	$(DHEADER)/$(CHEADERS)
 OBJ			=	$(CFILES:%.c=$(DOBJ)/%.o)
+
+#####################################################
+#					BONUS							#
+#####################################################
+DSRC_BONUS		=	src_bonus
+DOBJ_BONUS		=	obj_bonus
+DHEADER_BONUS	=	header_bonus
+
+CFILES_BONUS	=	main_bonus.c\
+					utils_bonus.c\
+					command_bonus.c
+
+CHEADERS_BONUS	=	pipex_bonus.h
+SRC_BONUS		=	$(DSRC_BONUS)/$(CFILES_BONUS)
+HEADERS_BONUS	=	$(DHEADER_BONUS)/$(CHEADERS_BONUS)
+OBJ_BONUS		=	$(CFILES_BONUS:%.c=$(DOBJ_BONUS)/%.o)
 
 #####################################################
 #					ARCHIVES						#
@@ -68,6 +84,19 @@ $(DOBJ):
 lib :
 	$(MAKE) -C $(DLIBFT)/
 
+#bonus##############
+
+bonus : lib $(OBJ_BONUS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJ_BONUS) $(LIBFT) -o $(NAME)
+
+$(DOBJ_BONUS)/%.o : $(DSRC_BONUS)/%.c $(HEADERS_BONUS) Makefile | $(DOBJ_BONUS)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(DOBJ_BONUS) :
+	mkdir -p $(DOBJ_BONUS)
+
+####################
+
 re: fclean
 	$(MAKE) all
 
@@ -77,4 +106,5 @@ fclean: clean
 
 clean :
 	rm -rf $(DOBJ)
+	rm -rf $(DOBJ_BONUS)
 	$(MAKE) clean -C $(DLIBFT)/

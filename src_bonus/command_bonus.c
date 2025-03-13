@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   command.c                                          :+:      :+:    :+:   */
+/*   command_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 13:37:49 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/13 10:16:04 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/13 11:50:56 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../header/pipex.h"
+#include "../header_bonus/pipex_bonus.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
