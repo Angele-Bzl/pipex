@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 13:37:49 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/12 15:51:20 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/13 10:13:59 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 static int	init_hyp_path(char **hyp_path, char **cmd_flags, char **env_path)
 {
@@ -23,10 +24,7 @@ static int	init_hyp_path(char **hyp_path, char **cmd_flags, char **env_path)
 	i = 0;
 	while (env_path[i])
 	{
-		if(i == 3)
-			path_w_backslash = NULL;//ft_strjoin(env_path[i], "/");
-		else
-			path_w_backslash = ft_strjoin(env_path[i], "/");
+		path_w_backslash = ft_strjoin(env_path[i], "/");
 		if (!path_w_backslash)
 		{
 			free_tab(hyp_path);
@@ -49,14 +47,17 @@ static char	*check_if_cmd_exists(char **hypothetical_path_cmd, char **path)
 {
 	int		i;
 	char	*real_path;
+	bool	found;
 
 	i = 0;
+	found = 0;
 	real_path = NULL;
 	while (path[i])
 	{
-		if (!access(hypothetical_path_cmd[i], X_OK))
+		if (!access(hypothetical_path_cmd[i], X_OK) && !found)
 		{
 			real_path = ft_strdup(hypothetical_path_cmd[i]);
+			found = 1;;
 		}
 		free(hypothetical_path_cmd[i]);
 		i++;
@@ -80,6 +81,18 @@ static int	find_path_in_env(char **env)
 	return (-1);
 }
 
+static void	fill_tab_null(char **tab, int len)
+{
+	int	i;
+
+	i = 0;
+	while (i < len)
+	{
+		tab[i] = NULL;
+		i++;
+	}
+}
+
 char	*find_real_cmd(char **env, char **cmd_and_flags)
 {
 	char	**env_path;
@@ -95,11 +108,12 @@ char	*find_real_cmd(char **env, char **cmd_and_flags)
 	hypothetical_path_cmd = malloc(sizeof (char *) * tablen(env_path));
 	if (!hypothetical_path_cmd)
 		return (free_tab(env_path));
+	fill_tab_null(hypothetical_path_cmd, tablen(env_path));
 	if (init_hyp_path(hypothetical_path_cmd, cmd_and_flags, env_path) == 0)
-	{
 		return (free_tab(env_path));
-	}
 	real_path = check_if_cmd_exists(hypothetical_path_cmd, env_path);
+	// free(real_path);//
+	// real_path = NULL;//
 	free_tab(env_path);
 	return (real_path);
 }
