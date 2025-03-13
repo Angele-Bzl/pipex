@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/13 11:49:36 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/13 14:02:01 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ typedef	struct s_user_env
 	char	**env;
 }			t_user_env;
 
-/*utils.c*/
+/*utils_bonus.c*/
 void	close_perror_exit(int *pipe_fd, int fd, char *message, int exit_status);
 void	putendl_exit(char *message, int exit_status);
 int		tablen(char **tab);
 char	*free_tab(char **tab);
 char	*ft_strtrim_improved(char *s1, char const *set);
-/*command.c*/
+/*command_bonus.c*/
 char	*find_real_cmd(char **env, char **cmd_and_flags);
 
 #endif

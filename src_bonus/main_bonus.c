@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/13 12:16:34 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/13 16:52:46 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,32 +67,63 @@ static void	manage_first_cmd(int *pipe_fd, t_user_env user_env, pid_t *pid)
 static void	manage_middle_cmds(int *pipe_fd, t_user_env user_env, pid_t *pid)
 {
 	int	i;
-	int	previous_pipe_output;
 
-	previous_pipe_output = pipe_fd[0];
-	if (pipe(pipe_fd) == -1)
-		close_perror_exit(0, 0, "pipe", EXIT_FAILURE);
 	i = 1;
 	while (i < user_env.ac - 4)
 	{
+		if (pipe(pipe_fd) == -1)
+			close_perror_exit(0, 0, "pipe", EXIT_FAILURE);
 		pid[i] = fork();
 		if (pid[i] == -1)
 			close_perror_exit(pipe_fd, 0, "fork", EXIT_FAILURE);
-
 		if (pid[i] == 0)
 		{
-			if (dup2(previous_pipe_output, STDIN_FILENO) == -1)
-				close_perror_exit(pipe_fd, previous_pipe_output, "dup2", EXIT_FAILURE);
+			if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+				close_perror_exit(pipe_fd, pipe_fd[0], "dup2", EXIT_FAILURE);
 			if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
-				close_perror_exit(pipe_fd, previous_pipe_output, "dup2", EXIT_FAILURE);
-			close(previous_pipe_output);
+				close_perror_exit(pipe_fd, pipe_fd[0], "dup2", EXIT_FAILURE);
 			close(pipe_fd[0]);
 			close(pipe_fd[1]);
-			manage_child(user_env.av[2], user_env.env);
+			manage_child(user_env.av[i + 2], user_env.env);
 		}
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
 		i++;
 	}
 }
+
+
+// static void	manage_middle_cmds(int *pipe_fd, t_user_env user_env, pid_t *pid)
+// {
+// 	int	i;
+// 	int	previous_pipe_output;
+
+// 	i = 1;
+// 	while (i < user_env.ac - 4)
+// 	{
+// 		previous_pipe_output = pipe_fd[0];
+// 		if (pipe(pipe_fd) == -1)
+// 			close_perror_exit(0, 0, "pipe", EXIT_FAILURE);
+// 		pid[i] = fork();
+// 		if (pid[i] == -1)
+// 			close_perror_exit(pipe_fd, 0, "fork", EXIT_FAILURE);
+// 		if (pid[i] == 0)
+// 		{
+// 			if (dup2(previous_pipe_output, STDIN_FILENO) == -1)
+// 				close_perror_exit(pipe_fd, previous_pipe_output, "dup2", EXIT_FAILURE);
+// 			if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+// 				close_perror_exit(pipe_fd, previous_pipe_output, "dup2", EXIT_FAILURE);
+// 			close(previous_pipe_output);
+// 			close(pipe_fd[0]);
+// 			close(pipe_fd[1]);
+// 			manage_child(user_env.av[i + 2], user_env.env);
+// 		}
+// 		close(previous_pipe_output);
+// 		close(pipe_fd[0]);
+// 		close(pipe_fd[1]);
+// 		i++;
+// 	}
+// }
 
 static void	manage_last_cmd(int *pipe_fd, t_user_env user_env, pid_t *pid)
 {
@@ -103,7 +134,7 @@ static void	manage_last_cmd(int *pipe_fd, t_user_env user_env, pid_t *pid)
 		close_perror_exit(pipe_fd, 0, "fork", EXIT_FAILURE);
 	if (pid[user_env.ac - 4] == 0)
 	{
-		outfile = open(user_env.av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		outfile = open(user_env.av[user_env.ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (outfile == -1)
 			close_perror_exit(pipe_fd, 0, "open", EXIT_FAILURE);
 		if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
@@ -113,18 +144,20 @@ static void	manage_last_cmd(int *pipe_fd, t_user_env user_env, pid_t *pid)
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 		close(outfile);
-		manage_child(user_env.av[3], user_env.env);
+		manage_child(user_env.av[user_env.ac - 2], user_env.env);
 	}
 }
 
-static int	wait_for_pid(pid_t *pid)
+static int	wait_for_pid(pid_t *pid, int ac)
 {
 	int	i;
 	int	status;
 
 	i = 0;
-	while (i < 2) //number of cmd/children
+	printf("ac - 3 = %d\n", ac - 3);
+	while (i < (ac - 3))
 	{
+		printf("i = %d\n", i);
 		if (waitpid(pid[i], &status, 0) == -1)
 		{
 			perror("wait");
@@ -161,10 +194,11 @@ int	main(int ac, char **av, char **env)
 	user_env.av = av;
 	user_env.env = env;
 	manage_first_cmd(pipe_fd, user_env, pid);
-	manage_middle_cmds(pipe_fd, user_env, pid);
+	if (ac > 5)
+		manage_middle_cmds(pipe_fd, user_env, pid);
 	manage_last_cmd(pipe_fd, user_env, pid);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
-	exit_status = wait_for_pid(pid);
+	exit_status = wait_for_pid(pid, ac);
 	exit(exit_status);
 }
