@@ -6,13 +6,12 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/13 10:14:11 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/17 15:33:16 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
 #include <fcntl.h>
-#include <stdio.h>
 #include <sys/wait.h>
 
 static void	manage_child(char *cmd, char **env)
@@ -58,8 +57,10 @@ static void	manage_first_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 			close_perror_exit(pipe_fd, infile, "dup2", EXIT_FAILURE);
 		close(infile);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+		if (pipe_fd[0] != STDIN_FILENO && pipe_fd[0] != STDOUT_FILENO)
+			close(pipe_fd[0]);
+		if (pipe_fd[1] != STDIN_FILENO && pipe_fd[1] != STDOUT_FILENO)
+			close(pipe_fd[1]);
 		manage_child(av[2], env);
 	}
 }
@@ -80,8 +81,10 @@ static void	manage_last_cmd(int *pipe_fd, char **av, char **env, pid_t *pid)
 			close_perror_exit(pipe_fd, outfile, "dup2", EXIT_FAILURE);
 		if (dup2(outfile, STDOUT_FILENO) == -1)
 			close_perror_exit(pipe_fd, outfile, "dup2", EXIT_FAILURE);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+		if (pipe_fd[0] != STDIN_FILENO && pipe_fd[0] != STDOUT_FILENO)
+			close(pipe_fd[0]);
+		if (pipe_fd[1] != STDIN_FILENO && pipe_fd[1] != STDOUT_FILENO)
+			close(pipe_fd[1]);
 		close(outfile);
 		manage_child(av[3], env);
 	}

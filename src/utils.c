@@ -6,14 +6,11 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 14:18:12 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/12 15:29:07 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/17 15:24:19 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/wait.h>
 
 void	close_perror_exit(int *pipe_fd, int fd, char *message, int exit_status)
 {

@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/12 14:16:51 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/17 15:23:30 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include "../libft/libft.h"
 # include "../libft/printf/ft_printf.h"
 # include "../libft/printf_err/ft_printf_err.h"
-# include <sys/wait.h>
+# include <stdio.h>
 
 /*utils.c*/
 void	close_perror_exit(int *pipe_fd, int fd, char *message, int exit_status);

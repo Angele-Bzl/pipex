@@ -6,14 +6,11 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 13:37:49 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/13 10:16:04 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:15:19 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/pipex.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/wait.h>
 #include <stdbool.h>
 
 static int	init_hyp_path(char **hyp_path, char **cmd_flags, char **env_path)

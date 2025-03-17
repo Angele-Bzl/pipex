@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 14:18:12 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/13 11:51:04 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/17 15:30:35 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
-void	close_perror_exit(int *pipe_fd, int fd, char *message, int exit_status)
+void	close_perror_exit(int *pipe_fd, int fd, char *message, pid_t *pid)
 {
 	if (pipe_fd)
 	{
@@ -26,13 +26,17 @@ void	close_perror_exit(int *pipe_fd, int fd, char *message, int exit_status)
 	}
 	if (fd)
 		close(fd);
+	if (pid)
+		free(pid);
 	perror(message);
-	exit(exit_status);
+	exit(EXIT_FAILURE);
 }
 
-void	putendl_exit(char *message, int exit_status)
+void	putendl_exit(char *message, int exit_status, pid_t *pid)
 {
 	ft_putendl_fd(message, STDERR_FILENO);
+	if (pid)
+		free(pid);
 	exit(exit_status);
 }
 
