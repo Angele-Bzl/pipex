@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/17 15:52:45 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/17 16:22:44 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,13 @@ static void	manage_first_cmd(int *pipe_fd, t_user_env user_env, pid_t *pid)
 static void	manage_middle_cmds(int *pipe_fd, t_user_env user_env, pid_t *pid)
 {
 	int	i;
+	int	previous_output;
 
 	i = 1;
 	while (i < user_env.ac - 4)
 	{
+		close(pipe_fd[1]);
+		previous_output = pipe_fd[0];
 		if (pipe(pipe_fd) == -1)
 			close_perror_exit(0, 0, "pipe", pid);
 		pid[i] = fork();
@@ -77,18 +80,16 @@ static void	manage_middle_cmds(int *pipe_fd, t_user_env user_env, pid_t *pid)
 			close_perror_exit(pipe_fd, 0, "fork", pid);
 		if (pid[i] == 0)
 		{
-			if (dup2((pipe_fd[0] - 2), STDIN_FILENO) == -1)
-				close_perror_exit(pipe_fd, pipe_fd[0], "dup2", pid);
+			if (dup2(previous_output, STDIN_FILENO) == -1)
+				close_perror_exit(pipe_fd, previous_output, "dup2", pid);
 			if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
-				close_perror_exit(pipe_fd, pipe_fd[0], "dup2", pid);
-			close(pipe_fd[0] - 2);
-			close(pipe_fd[1] - 2);
+				close_perror_exit(pipe_fd, previous_output, "dup2", pid);
+			close(previous_output);
 			close(pipe_fd[0]);
 			close(pipe_fd[1]);
 			manage_child(user_env.av[i + 2], user_env.env, pid);
 		}
-		close(pipe_fd[0] - 2);
-		close(pipe_fd[1] - 2);
+		close(previous_output);
 		i++;
 	}
 }
