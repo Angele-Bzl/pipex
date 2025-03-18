@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 08:48:06 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/18 09:08:51 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/18 11:24:09 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,17 +120,14 @@ int	main(int ac, char **av, char **env)
 	int			exit_status;
 	t_user_env	user_env;
 
-	if (ac < 5)
-	{
-		ft_putendl_fd("Error\nInvalid number of argument", STDERR_FILENO);
+	if (check_env_av(ac, env) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	}
-	if (!env || !env[0])
-	{
-		ft_putendl_fd("Error\nNo environment", STDERR_FILENO);
-		return (EXIT_FAILURE);
-	}
 	pid = malloc(sizeof (pid_t) * (ac - 3));
+	if (!pid)
+	{
+		ft_putendl_fd("Error\nMalloc failed", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
 	init_struct_env(&user_env, ac, av, env);
 	manage_first_cmd(pipe_fd, user_env, pid);
 	if (ac > 5)

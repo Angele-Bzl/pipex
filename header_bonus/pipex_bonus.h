@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 14:43:26 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/18 09:08:46 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/18 11:23:52 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ char	*ft_strtrim_improved(char *s1, char const *set);
 void	close_all(int *pipe_fd, int file);
 void	init_struct_env(t_user_env *user_env, int ac, char **av, char **env);
 int		wait_for_pid(pid_t *pid, int ac);
+int		check_env_av(int ac, char **env);
 /*command_bonus.c*/
 char	*find_real_cmd(char **env, char **cmd_and_flags);
 

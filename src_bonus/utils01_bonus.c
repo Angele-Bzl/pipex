@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 08:56:39 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/18 09:10:11 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/03/18 11:23:01 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,20 @@ int	wait_for_pid(pid_t *pid, int ac)
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
 		return (128 + WTERMSIG(status));
+	return (EXIT_SUCCESS);
+}
+
+int	check_env_av(int ac, char **env)
+{
+	if (ac < 5)
+	{
+		ft_putendl_fd("Error\nInvalid number of argument", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
+	if (!env || !env[0])
+	{
+		ft_putendl_fd("Error\nNo environment", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
