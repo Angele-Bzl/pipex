@@ -6,7 +6,7 @@
 #    By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/16 16:11:34 by abarzila          #+#    #+#              #
-#    Updated: 2025/03/17 13:58:51 by abarzila         ###   ########.fr        #
+#    Updated: 2025/03/18 08:57:48 by abarzila         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,8 @@ DOBJ_BONUS		=	obj_bonus
 DHEADER_BONUS	=	header_bonus
 
 CFILES_BONUS	=	main_bonus.c\
-					utils_bonus.c\
+					utils00_bonus.c\
+					utils01_bonus.c\
 					command_bonus.c
 
 CHEADERS_BONUS	=	pipex_bonus.h
