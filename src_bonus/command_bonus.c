@@ -6,7 +6,7 @@
 /*   By: abarzila <abarzila@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 13:37:49 by abarzila          #+#    #+#             */
-/*   Updated: 2025/03/13 14:43:53 by abarzila         ###   ########.fr       */
+/*   Updated: 2025/04/08 08:39:28 by abarzila         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,8 @@ char	*find_real_cmd(char **env, char **cmd_and_flags)
 	char	**hypothetical_path_cmd;
 	char	*real_path;
 
+	if (ft_strchr(cmd_and_flags[0], '/'))
+		return(cmd_and_flags[0]);
 	env_path = ft_split(env[find_path_in_env(env)], ':');
 	if (!env_path)
 		return (NULL);
